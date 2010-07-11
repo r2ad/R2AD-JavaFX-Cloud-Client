@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Description: This is not per OCCI spec.  This is a legacy ON example.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.occi-pilot.org"
+	         xmlns:occi="http://www.occi-pilot.org"
+           attributeFormDefault="unqualified"
+           elementFormDefault="unqualified"
+>
+  <xs:simpleType name="positiveFloat">
+    <xs:restriction base="xs:float">
+      <xs:minInclusive value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="RelatedType">
+    <xs:restriction base="xs:NMTOKEN"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="ComputeArchitectureEnum">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="x86" />
+      <xs:enumeration value="x64" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ComputeStatusEnum">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="active" />
+      <xs:enumeration value="inactive" />
+      <xs:enumeration value="suspended" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NetworkAllocationEnum">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="auto" />
+      <xs:enumeration value="dhcp" />
+      <xs:enumeration value="manual" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NetworkVlanType">
+    <xs:restriction base="xs:unsignedInt">
+      <xs:maxInclusive value="4095" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StorageStatusEnum" >
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="online" />
+      <xs:enumeration value="offline" />
+      <xs:enumeration value="degraded" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:element name="OCCI" type="occi:OCCI" />
+    <xs:complexType name="OCCI" >
+    <xs:sequence>
+      <xs:element name="kind" type="occi:kind" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="compute" type="occi:compute" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="network" type="occi:network" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="storage" type="occi:storage" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="kind" type="occi:kind" />
+  <xs:complexType name="kind">
+    <xs:sequence>
+      <xs:element name="compute" type="occi:compute" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="network" type="occi:network" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="storage" type="occi:storage" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:NMTOKEN" use="required" />
+    <xs:attribute name="related" type="occi:RelatedType" use="optional" />
+    <xs:attribute name="title" type="xs:string" use="optional" />
+    <xs:attribute name="summary" type="xs:string" use="optional" />
+  </xs:complexType>
+  
+  <xs:element name="compute" type="occi:compute" />
+  <xs:complexType name="compute">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded" >
+      <xs:element name="link" type="xs:anyURI" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:NMTOKEN" use="required" />
+    <xs:attribute name="related" type="occi:RelatedType" use="optional" />
+    <xs:attribute name="title" type="xs:string" use="optional" />
+    <xs:attribute name="summary" type="xs:string" use="optional" />
+    <xs:attribute name="cores" type="occi:positiveFloat" use="optional" />
+    <xs:attribute name="architecture" type="occi:ComputeArchitectureEnum" use="optional" />
+    <xs:attribute name="hostname" type="xs:string" use="required" />
+    <xs:attribute name="speed" type="occi:positiveFloat" use="required" />
+    <xs:attribute name="memory" type="occi:positiveFloat" use="required" />
+    <xs:attribute name="status" type="occi:ComputeStatusEnum" use="required" />
+  </xs:complexType>
+  
+  <xs:element name="network" type="occi:network"/>
+  <xs:complexType name="network">
+    <xs:sequence minOccurs="0">
+      <xs:element name="link" type="xs:anyURI" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:NMTOKEN" use="required" />
+    <xs:attribute name="related" type="occi:RelatedType" use="optional" />
+    <xs:attribute name="allocation" type="occi:NetworkAllocationEnum" use="optional" />
+    <xs:attribute name="title" type="xs:string" use="optional" />
+    <xs:attribute name="summary" type="xs:string" use="optional" />
+    <xs:attribute name="address" type="xs:string" use="optional" />
+    <xs:attribute name="gateway" type="xs:string" use="optional" />
+    <xs:attribute name="vlan" type="occi:NetworkVlanType" use="optional" />
+    <xs:attribute name="label" type="xs:string" use="optional" />
+  </xs:complexType>
+  
+  <xs:element name="storage" type="occi:storage"/>
+  <xs:complexType name="storage">
+    <xs:sequence minOccurs="0">
+      <xs:element name="link" type="xs:anyURI" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:NMTOKEN" use="required" />
+    <xs:attribute name="related" type="occi:RelatedType" use="optional" />
+    <xs:attribute name="title" type="xs:string" use="optional" />
+    <xs:attribute name="summary" type="xs:string" use="optional" />
+    <xs:attribute name="size" type="occi:positiveFloat" use="optional" />
+    <xs:attribute name="status" type="occi:StorageStatusEnum" use="optional" />
+  </xs:complexType>
+</xs:schema>
+

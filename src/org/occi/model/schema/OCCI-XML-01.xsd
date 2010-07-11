@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Description: This is not per OCCI spec.  This is a legacy ON example.
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="collection">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" name="compute">
+          <xs:complexType>
+            <xs:attribute name="id" type="xs:string" use="required" />
+            <xs:attribute name="title" type="xs:string" use="optional" />
+            <xs:attribute name="summary" type="xs:string" use="optional" />
+            <xs:attribute name="cores" type="xs:positiveInteger" use="optional" />
+            <xs:attribute name="architecture" type="xs:string" use="optional" />
+            <xs:attribute name="hostname" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element maxOccurs="unbounded" name="network">
+          <xs:complexType>
+            <xs:attribute name="id" type="xs:string" use="required" />
+            <xs:attribute name="allocation" type="xs:string" use="optional" />
+            <xs:attribute name="title" type="xs:string" use="optional" />
+            <xs:attribute name="summary" type="xs:string" use="optional" />
+            <xs:attribute name="address" type="xs:string" use="optional" />
+            <xs:attribute name="gateway" type="xs:string" use="optional" />
+            <xs:attribute name="vlan" type="xs:unsignedInt" use="optional" />
+            <xs:attribute name="label" type="xs:string" use="optional" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element maxOccurs="unbounded" name="memory">
+          <xs:complexType>
+            <xs:attribute name="id" type="xs:string" use="required" />
+            <xs:attribute name="title" type="xs:string" use="optional" />
+            <xs:attribute name="summary" type="xs:string" use="optional" />
+            <xs:attribute name="size" type="xs:decimal" use="optional" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element maxOccurs="unbounded" name="storage">
+          <xs:complexType>
+            <xs:sequence minOccurs="0">
+              <xs:element name="link" type="xs:anyURI" />
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required" />
+            <xs:attribute name="title" type="xs:string" use="optional" />
+            <xs:attribute name="summary" type="xs:string" use="optional" />
+            <xs:attribute name="size" type="xs:decimal" use="optional" />
+	    <xs:attribute name="status" type="xs:string" use="optional" />
+            
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="title" type="xs:string" use="optional" />
+      <xs:attribute name="summary" type="xs:string" use="optional" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

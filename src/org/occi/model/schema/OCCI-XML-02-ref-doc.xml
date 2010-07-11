@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Description: This is not per OCCI spec.  This is a legacy ON example.
+-->
+<OCCI 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.alloycloud.com"
+      xsi:schemaLocation="http://www.alloycloud.com occi-xml-02.xsd"
+      >
+
+  <kind  id="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="My VM1" summary="A test Vitrual Machine 1">
+    <compute id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Mains" summary="Main CPUs" cores="" architecture="" hostname=""></compute>
+    <compute id="VM1-F9B6EA5D-BFCE-43a8-B100-B72A0B841CD8" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Spare" summary="Spared for Failover" cores="2" architecture="x86" hostname="Wally"></compute>
+
+    <network id="VM1-AC3F20FA-AB76-4fb2-AE31-A81A9467588C" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" allocation="dhcp"></network>
+    <network id="VM1-AC3F20FB-AB76-4fb2-AE32-A81A9467588C" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Public" summary="Public"  address="" gateway="" allocation="auto"></network>
+    <network id="VM1-AC3F20FC-AB76-4fb2-AE32-A81A9467588C" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Mgt" summary="Mgt" vlan="22" label="Management Segment" address="172.31.1.10" gateway="172.31.1.1" allocation="manual"></network>
+    <network id="VM1-AC3F20FD-AB76-4fb2-AE32-A81A9467588C" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Heartbeat" summary="" vlan="12" label="Hearbeat Segment" allocation="dhcp"></network>
+
+    <storage id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Disk1" summary="Main Disk" size="2000000000" status="offline">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-DISK-2-VM1</link>
+    </storage>
+    <storage id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD9" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Disk2" summary="Transaction Disk" size="2000000000" status="degraded">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-DISK-2-VM1</link>
+    </storage>
+    <storage id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CDA" related="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Spare" summary="Spared for Failover" size="2000000000" status="online">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-SPARE-VM1</link>
+    </storage>
+  </kind>
+
+  <kind  id="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="My VM2" summary="A test Vitrual Machine 2">
+    <compute id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Mains" summary="Main CPUs" cores="" architecture="" hostname=""></compute>
+    <compute id="VM2-E9B6EA5D-BFCE-43a8-B100-B72A0B841CD8" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Spare" summary="Spared for Failover" cores="2" architecture="x86" hostname="Wally"></compute>
+
+    <network id="VM2-AC3F20FA-AB76-4fb2-AE31-A81A9467588C" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" allocation="dhcp"></network>
+    <network id="VM2-AC3F20FB-AB76-4fb2-AE32-A81A9467588C" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Public" summary="Public"  address="" gateway="" allocation="auto"></network>
+    <network id="VM2-AC3F20FC-AB76-4fb2-AE32-A81A9467588C" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Mgt" summary="Mgt" vlan="22" label="Management Segment" address="172.31.1.10" gateway="172.31.1.1" allocation="manual"></network>
+    <network id="VM2-AC3F20FD-AB76-4fb2-AE32-A81A9467588C" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Heartbeat" summary="" vlan="12" label="Hearbeat Segment" allocation="dhcp"></network>
+
+    <memory id="VM2-AC3F20FD-AB76-4fb2-AE31-A81A9467588D" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+    <memory id="VM2-AC3F20FD-AB76-4fb2-AE31-A81A9467588E" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Shared" summary="System Memory for Shared" size="1000000"></memory>
+    <memory id="VM2-AC3F20FD-AB76-4fb2-AE31-A81A9467588F" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+
+    <storage id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Disk1" summary="Main Disk" size="2000000000" status="offline">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-DISK-2-VM2</link>
+    </storage>
+    <storage id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Disk2" summary="Transaction Disk" size="2000000000" status="degraded">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-DISK-2-VM2</link>
+    </storage>
+    <storage id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CDA" related="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Spare" summary="Spared for Failover" size="2000000000" status="online">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-SPARE-VM2</link>
+    </storage>
+  </kind>
+
+  <kind  id="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="My VM2" summary="A test Vitrual Machine 2">
+    <compute id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Mains" summary="Main CPUs" cores="" architecture="" hostname=""></compute>
+    <compute id="VM3-E9B6EA5D-BFCE-43a8-B100-B72A0B841CD8" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Spare" summary="Spared for Failover" cores="2" architecture="x86" hostname="Wally"></compute>
+
+    <network id="VM3-AC3F20FA-AB76-4fb2-AE31-A81A9467588C" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" allocation="dhcp"></network>
+    <network id="VM3-AC3F20FB-AB76-4fb2-AE32-A81A9467588C" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Public" summary="Public"  address="" gateway="" allocation="auto"></network>
+    <network id="VM3-AC3F20FC-AB76-4fb2-AE32-A81A9467588C" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Mgt" summary="Mgt" vlan="22" label="Management Segment" address="172.31.1.10" gateway="172.31.1.1" allocation="manual"></network>
+    <network id="VM3-AC3F20FD-AB76-4fb2-AE32-A81A9467588C" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Heartbeat" summary="" vlan="12" label="Hearbeat Segment" allocation="dhcp"></network>
+
+    <storage id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Disk1" summary="Main Disk" size="2000000000" status="offline">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-DISK-2-VM3</link>
+    </storage>
+    <storage id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD9" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Disk2" summary="Transaction Disk" size="2000000000" status="degraded">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-DISK-2-VM3</link>
+    </storage>
+    <storage id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CDA" related="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="Spare" summary="Spared for Failover" size="2000000000" status="online">
+      <link>http://www.cdmi-pilot.org/demo/CDMI-SPARE-VM3</link>
+    </storage>
+  </kind>
+
+</OCCI>

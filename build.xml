@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<project name="ProjectManager" default="default" basedir=".">
+    <description>Builds, tests, and runs the project ProjectManager.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!-- 
+       The following part allows you to run the sample out of NetBeans IDE. It will
+       be overriden when opened in NetBeans for the first time.
+     -->
+    <target name="private.check">	
+    	<available property="private_found" file="nbproject/private/private.properties"/>
+    </target>
+    
+    <target name="-pre-init" depends="private.check" unless="private_found">
+        <echo message="using javafx home ${jfx.home}"/>
+        <available property="jfx.home" value="../.." file="../../lib/javafxrt.jar"/>
+        <property environment="env"/>
+        <fail message="Missing JavaFX SDK. Point JAVAFX_HOME to the SDK" unless="env.JAVAFX_HOME"/>
+        <property name="jfx.home" value="${env.JAVAFX_HOME}"/>
+        <echo message="using javafx home ${jfx.home}"/>
+                
+        <property name="platforms.Default.home" value="${java.home}"/>
+        <property name="platforms.Default.fxhome" value="${jfx.home}"/>
+        <property name="platforms.Default.bootclasspath" value="${jfx.home}/lib/desktop/eula.jar:${jfx.home}/lib/shared/javafxc.jar:${sun.boot.class.path}:${jfx.home}/lib:${jfx.home}/lib/desktop/Decora-D3D.jar:${jfx.home}/lib/desktop/Decora-HW.jar:${jfx.home}/lib/desktop/Decora-OGL.jar:${jfx.home}/lib/desktop/gluegen-rt.jar:${jfx.home}/lib/shared/javafxdoc.jar:${jfx.home}/lib/shared/javafxrt.jar:${jfx.home}/lib/desktop/jmc.jar:${jfx.home}/lib/desktop/jogl.jar:${jfx.home}/lib/jsr173_1.0_api.jar:${jfx.home}/lib/desktop/javafxgui.jar:${jfx.home}/lib/desktop/javafx-swing.jar:${jfx.home}/lib/desktop/Scenario.jar:${jfx.home}/lib/desktop/websvc.jar"/>
+        <property name="platforms.Default.compiler" value="modern"/>
+        <property name="platforms.Default.java" value="${platforms.Default.home}/bin/java"/>
+        <property name="platform.active" value="Default"/>
+    </target>
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="ProjectManager-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+
+</project>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : OCCInode.xml
+    Created on : May 30, 2010, 10:51 AM
+    Author     : behrens
+    Description: This is not per OCCI spec and it here as an ON legacy example.
+-->
+
+<OCCI xmlns="http://www.occi-pilot.org"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.occi-pilot.org/occi-xml-01.xsd">
+
+ <collection  id="VM1-6D5FB012-1ED6-4ce2-A466-19E862DB795B}" title="My VM1" summary="A test Vitrual Machine 1">
+ <compute id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" title="Mains" summary="Main CPUs" cores="" architecture="" hostname=""></compute>
+ <compute id="VM1-F9B6EA5D-BFCE-43a8-B100-B72A0B841CD8" title="Spare" summary="Spared for Failover" cores="2" architecture="x86" hostname="Wally"></compute>
+
+ <network id="VM1-AC3F20FA-AB76-4fb2-AE31-A81A9467588C" allocation="dhcp"></network>
+ <network id="VM1-AC3F20FB-AB76-4fb2-AE32-A81A9467588C" title="Public" summary="Public"  address="" gateway="" allocation="auto"></network>
+ <network id="VM1-AC3F20FC-AB76-4fb2-AE32-A81A9467588C" title="Mgt" summary="Mgt" vlan="22" label="Management Segment" address="172.31.1.10" gateway="172.31.1.1" allocation="manual"></network>
+ <network id="VM1-AC3F20FD-AB76-4fb2-AE32-A81A9467588C" title="Heartbeat" summary="" vlan="12" label="Hearbeat Segment" allocation="dhcp"></network>
+
+ <memory id="VM1-AC3F20FD-AB76-4fb2-AE31-A81A9467588D" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+ <memory id="VM1-AC3F20FD-AB76-4fb2-AE31-A81A9467588E" title="Shared" summary="System Memory for Shared" size="1000000"></memory>
+ <memory id="VM1-AC3F20FD-AB76-4fb2-AE31-A81A9467588F" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+
+ <storage id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" title="Disk1" summary="Main Disk" size="2000000000" status="offline">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-DISK-2-VM1</link>
+ </storage>
+ <storage id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD9" title="Disk2" summary="Transaction Disk" size="2000000000" status="degraded">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-DISK-2-VM1</link>
+ </storage>
+ <storage id="VM1-E9B6EA5D-AFCD-43a8-B100-B72A0B841CDA" title="Spare" summary="Spared for Failover" size="2000000000" status="online">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-SPARE-VM1</link>
+ </storage>
+</collection>
+
+<collection  id="VM2-6D5FB012-1ED6-4ce2-A466-19E862DB795B" title="My VM2" summary="A test Vitrual Machine 2">
+ <compute id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" title="Mains" summary="Main CPUs" cores="" architecture="" hostname=""></compute>
+ <compute id="VM2-E9B6EA5D-BFCE-43a8-B100-B72A0B841CD8" title="Spare" summary="Spared for Failover" cores="2" architecture="x86" hostname="Wally"></compute>
+
+ <network id="VM2-AC3F20FA-AB76-4fb2-AE31-A81A9467588C" allocation="dhcp"></network>
+ <network id="VM2-AC3F20FB-AB76-4fb2-AE32-A81A9467588C" title="Public" summary="Public"  address="" gateway="" allocation="auto"></network>
+ <network id="VM2-AC3F20FC-AB76-4fb2-AE32-A81A9467588C" title="Mgt" summary="Mgt" vlan="22" label="Management Segment" address="172.31.1.10" gateway="172.31.1.1" allocation="manual"></network>
+ <network id="VM2-AC3F20FD-AB76-4fb2-AE32-A81A9467588C" title="Heartbeat" summary="" vlan="12" label="Hearbeat Segment" allocation="dhcp"></network>
+
+ <memory id="VM2-AC3F20FD-AB76-4fb2-AE31-A81A9467588D" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+ <memory id="VM2-AC3F20FD-AB76-4fb2-AE31-A81A9467588E" title="Shared" summary="System Memory for Shared" size="1000000"></memory>
+ <memory id="VM2-AC3F20FD-AB76-4fb2-AE31-A81A9467588F" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+
+ <storage id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" title="Disk1" summary="Main Disk" size="2000000000" status="offline">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-DISK-2-VM2</link>
+ </storage>
+ <storage id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD(" title="Disk2" summary="Transaction Disk" size="2000000000" status="degraded">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-DISK-2-VM2</link>
+ </storage>
+ <storage id="VM2-E9B6EA5D-AFCD-43a8-B100-B72A0B841CDA" title="Spare" summary="Spared for Failover" size="2000000000" status="online">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-SPARE-VM2</link>
+ </storage>
+</collection>
+
+<collection  id="VM3-6D5FB012-1ED6-4ce2-A466-19E862DB795B}" title="My VM3" summary="A test Vitrual Machine 3">
+ <compute id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" title="Mains" summary="Main CPUs" cores="" architecture="" hostname=""></compute>
+ <compute id="VM3-E9B6EA5D-BFCE-43a8-B100-B72A0B841CD8" title="Spare" summary="Spared for Failover" cores="2" architecture="x86" hostname="Wally"></compute>
+
+ <network id="VM3-AC3F20FA-AB76-4fb2-AE31-A81A9467588C" allocation="dhcp"></network>
+ <network id="VM3-AC3F20FB-AB76-4fb2-AE32-A81A9467588C" title="Public" summary="Public"  address="" gateway="" allocation="auto"></network>
+ <network id="VM3-AC3F20FC-AB76-4fb2-AE32-A81A9467588C" title="Mgt" summary="Mgt" vlan="22" label="Management Segment" address="172.31.1.10" gateway="172.31.1.1" allocation="manual"></network>
+ <network id="VM3-AC3F20FD-AB76-4fb2-AE32-A81A9467588C" title="Heartbeat" summary="" vlan="12" label="Hearbeat Segment" allocation="dhcp"></network>
+
+ <memory id="VM3-AC3F20FD-AB76-4fb2-AE31-A81A9467588D" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+ <memory id="VM3-AC3F20FD-AB76-4fb2-AE31-A81A9467588E" title="Shared" summary="System Memory for Shared" size="1000000"></memory>
+ <memory id="VM3-AC3F20FD-AB76-4fb2-AE31-A81A9467588F" title="RamDisk" summary="System Memory for RamDisk" size="1000000"></memory>
+
+ <storage id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD8" title="Disk1" summary="Main Disk" size="2000000000" status="offline">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-DISK-2-VM3</link>
+ </storage>
+ <storage id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CD9" title="Disk2" summary="Transaction Disk" size="2000000000" status="degraded">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-DISK-2-VM3</link>
+ </storage>
+ <storage id="VM3-E9B6EA5D-AFCD-43a8-B100-B72A0B841CDA" title="Spare" summary="Spared for Failover" size="2000000000" status="online">
+   <link>http://www.cdmi-pilot.com/demo/CDMI-SPARE-VM3</link>
+ </storage>
+</collection>
+</OCCI>
