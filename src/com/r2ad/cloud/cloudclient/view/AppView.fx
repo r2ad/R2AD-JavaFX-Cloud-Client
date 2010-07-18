@@ -133,11 +133,14 @@ public abstract class AppView extends CustomNode {
      */
     protected abstract function createView(): Void;
 
+    public function loadData():Void {
+    }
     /**
      * Embeds the view into view content and returns the same as a
      * custom node.
      */
     public override function create(): Node {
+        loadData();  // restore any preference data first...
         createView();
         insert view into viewContent;
         return Group {

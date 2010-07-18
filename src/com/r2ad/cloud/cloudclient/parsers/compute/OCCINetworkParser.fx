@@ -20,14 +20,13 @@ import javafx.io.http.HttpRequest;
 import com.r2ad.cloud.cloudclient.controller.Controller;
 import java.net.URI;
 import org.occi.model.OCCIComputeType;
-
-//import cloudclient.model.NodeModel;
+import com.r2ad.cloud.cloudclient.utils.Encoder;
+import com.sun.javafx.io.http.impl.Base64;
 
 /**
- * This is the OCCI Node Parser which implements a portion of the OCCI specification.
+ * This is the OCCI Network Parser which implements a portion of the OCCI specification.
  * This version uses the PullParser API to parse results in XML.
  */
-
 
     /**
     * Obtain the controller via the singleton - this is temporary code:
@@ -42,30 +41,45 @@ import org.occi.model.OCCIComputeType;
     var connection;
     var resultsProcessor: function(is: InputStream) : Void;
 
-    // Information about all relevant cloud nodes
-    //public var cloudNodes: NodeModel[];
-
-    public function getComputeNode(stringID: String) : Void {
+    public function getNetwork(URIstringID: String) : Void {
         connection = controller.dataManager.getComputeConnection();
-        domainURI = new URI("{connection.connection}/{stringID}");
+        domainURI = new URI(URIstringID);
         connection.updateStatus("Getting OCCI resource...domainURI: {domainURI}");
 
-        println("{myName}: getDetails from {stringID} to: {connection}");
-        var authenticationHeader = HttpHeader.basicAuth(connection.user, connection.credentials);
-        //var credentials = Base64.encode("{connection.user}:{connection.credentials}".getBytes());
-        println("{myName}: Who: {connection.user} pass: {connection.credentials}");
-        var acceptHeader = HttpHeader {
-               name: HttpHeader.ACCEPT,
-               value:"*/*"
-            };
-        var contentHeader = HttpHeader {
-               name: HttpHeader.CONTENT_TYPE;
-               value:"application/occi"
-            };
-        var request : HttpRequest = HttpRequest {
-           // TBD: Actually, need to get the path to the resource
-            location: "{connection.connection}";
-            headers: [authenticationHeader, acceptHeader, contentHeader]
+        println("{myName}: get Network details from {URIstringID} to: {connection}");
+        println("{myName}: using connection: {connection}");
+    var normalAuthenticationHeader = HttpHeader.basicAuth(connection.user, connection.credentials);
+    // Good Ref: http://javafx.com/samples/ScreenshotMaker/src/Flickr.java.html
+    var digestedPassPhrase = Encoder.sign("{connection.credentials}");
+    var credentials64 = Base64.encode("{connection.user}:{digestedPassPhrase}".getBytes());
+    var rubyAuthHeader = HttpHeader {
+           name: "Authorization",
+           value:"Basic {credentials64}"
+        };
+    var authenticationHeader;
+    if ( controller.loginView.alternate == false ) {
+        // This is now the default
+        authenticationHeader=rubyAuthHeader;
+        println("{myName}: using rubyAuthHeader");
+    } else {
+        authenticationHeader=normalAuthenticationHeader;
+        println("{myName}: using normalAuthenticationHeader");
+    }
+    var agentHeader = HttpHeader {
+           name: "User-Agent",
+           value:"R2ADCloud"
+     };
+    var acceptHeader = HttpHeader {
+           name: HttpHeader.ACCEPT,
+           value:"*/*"
+        };
+    var contentHeader = HttpHeader {
+           name: HttpHeader.CONTENT_TYPE;
+           value:"application/occi"
+        };
+    var request : HttpRequest = HttpRequest {
+            location: "{domainURI}";
+            headers: [contentHeader, acceptHeader, agentHeader, authenticationHeader]
             method: HttpRequest.GET
 
             onStarted: function() {
@@ -97,7 +111,7 @@ import org.occi.model.OCCIComputeType;
             onResponseMessage: function(msg:String) { println("responseMessage: {msg}") }
             onToRead: function(bytes: Long) {
                println("bytes to read: {bytes}");
-               connection.updateStatus("Reading {bytes} OCCI bytes");
+               //connection.updateStatus("Reading {bytes} OCCI bytes");
 
              }
 
@@ -116,8 +130,8 @@ import org.occi.model.OCCIComputeType;
                     println("{myName}: bytes of content available: {is.available()}");
                 } finally {
                     is.close();
-                    println("{myName}: Finished Parsing: {stringID}");
-                    connection.updateStatus("Finisihed parsing OCCI Node");
+                    println("{myName}: Finished Parsing: {URIstringID}");
+                    connection.updateStatus("Finisihed parsing OCCI Network");
                 }
             }
         }
@@ -155,7 +169,7 @@ function processStartEvent(event: Event) {
 function processEndEvent(event: Event) {
     //START_VALUE=25, START_ELEMENT=1, START_DOCUMENT=7, START_ARRAY=16
     //START_ARRAY_ELEMENT=17, END_ARRAY_ELEMENT=18, END_ELEMENT=2
-    println("{myName}:  event.level={event.level} event.qname.name: {event.qname.name} event.type: {event.type} event.name: {event.name} event.text={event.text}");
+    println("** {myName}:  event.level={event.level} event.qname.name: {event.qname.name} event.type: {event.type} event.name: {event.name} event.text={event.text}");
 
     if (event.qname.name == "collection" and event.level == 1) {
         println("{myName}: Detected Collection: {event.text}");
@@ -165,7 +179,7 @@ function processEndEvent(event: Event) {
             // Store the value in this collection
         }
     } else if (event.qname.name == "collection" and event.level == 2) {
-            println("{myName}/2: collection Level 2");
+        println("{myName}/2: collection Level 2");
     } else if (event.qname.name == "compute" and event.level == 2) {
         println("{myName}: Detected compute");
         var id : String = event.getAttributeValue("id");
@@ -195,36 +209,22 @@ function processEndEvent(event: Event) {
         // Debug:
         for (qname in event.getAttributeNames()) {
             var value = event.getAttributeValue(qname);
-            println("compute: {qname} value: {value}");
-            // Store the value in this collection
-        }
-    } else if (event.qname.name == "storage" and event.level == 2) {
-        println("{myName}: Detected storage");
-        for (qname in event.getAttributeNames()) {
-            var value = event.getAttributeValue(qname);
-            println("storage: {qname} value: {value}");
+            println("{myName}: {qname} value: {value}");
             // Store the value in this collection
         }
 
-    } else if (event.qname.name == "memory" and event.level == 2) {
-        println("{myName}: Detected storage");
-        for (qname in event.getAttributeNames()) {
-            var value = event.getAttributeValue(qname);
-            println("memory: {qname} value: {value}");
-            // Store the value in this collection
-        }
     } else if (event.qname.name == "network" and event.level == 2) {
         println("{myName}: Detected storage");
         for (qname in event.getAttributeNames()) {
             var value = event.getAttributeValue(qname);
-            println("network: {qname} value: {value}");
+            println("{myName} network: {qname} value: {value}");
             // Store the value in this collection
         }
     } else if (event.qname.name == "link" and event.level == 2) {
         println("{myName}: Detected link");
         for (qname in event.getAttributeNames()) {
             var value = event.getAttributeValue(qname);
-            println("link: {qname} value: {value}");
+            println("{myName} link: {qname} value: {value}");
             // Store the value in this collection
         }
     }

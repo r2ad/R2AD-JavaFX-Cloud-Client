@@ -43,8 +43,8 @@ import com.sun.javafx.io.http.impl.Base64;
     //public var cloudNodes: NodeModel[];
 
     public function createDisk(newModel: OCCINetworkType) : Void {
-        println("++createNetwork: {newModel}");
-        println("++createNetwork: {newModel.getTitle()}");
+        println("++createDisk: {newModel}");
+        println("++createDisk: {newModel.getTitle()}");
 
         content.append("<DISK>\n");
         content.append("<NAME>{newModel.getTitle()}-Disk</NAME>\n");
@@ -99,7 +99,7 @@ import com.sun.javafx.io.http.impl.Base64;
                    value:"{contentLength}"
                 };
             var request : HttpRequest = HttpRequest {
-                location: "{connection.connection}/network";
+                location: "{connection.connection}/disk";
                 headers: [contentHeader, acceptHeader, contentLengthHeader, authenticationHeader]
                 method: HttpRequest.POST //create
 

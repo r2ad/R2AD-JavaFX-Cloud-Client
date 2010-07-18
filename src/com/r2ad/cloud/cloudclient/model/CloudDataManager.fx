@@ -19,8 +19,8 @@ import com.r2ad.cloud.cloudclient.parsers.storage.CDMIRootContainerParser;
 import com.r2ad.cloud.cloudclient.parsers.storage.CDMIDeleteContainer;
 import com.r2ad.cloud.cloudclient.parsers.storage.CDMICreateContainer;
 import com.r2ad.cloud.cloudclient.parsers.compute.OCCINodeParser;
-import com.r2ad.cloud.cloudclient.parsers.compute.OCCICreateNetwork;
 import org.occi.model.OCCINetworkType;
+import com.r2ad.cloud.cloudclient.parsers.compute.OCCICreateDisk;
 
 /**
  * @author David K. Moolenaar, R2AD LLC
@@ -135,7 +135,7 @@ public class CloudDataManager {
         netModel.setTitle(cModel.getTitle());
         netModel.setAddress("10.1.230.1");
         //println("++addComputeType: {netModel}");
-        OCCICreateNetwork.createNetwork(netModel);        
+        OCCICreateDisk.createDisk(netModel);
         insert cModel into computeArray;
         return storageArray.size();
 

@@ -96,9 +96,9 @@ public function getComputeDetails(stringURL: String) : Void {
         onStarted: function() {
            println("{myName}: onStarted - started performing method");
         }
-        onConnecting: function() { println("OCCINodeParser: connecting to {request.location}") }
-        onDoneConnect: function() { println("OCCINodeParser: doneConnect") }
-        onReadingHeaders: function() { println("readingHeaders...") }
+        onConnecting: function() { println("{myName}: connecting to {request.location}") }
+        onDoneConnect: function() { println("{myName}: doneConnect") }
+        onReadingHeaders: function() { println("{myName}: readingHeaders...") }
         onResponseCode: function(code:Integer) {
             println("{myName}: responseCode: {code}");
             //controller.dataManager.removeStorageType(stringID);
@@ -125,7 +125,7 @@ public function getComputeDetails(stringURL: String) : Void {
         onResponseMessage: function(msg:String) { println("responseMessage: {msg}") }
         onToRead: function(bytes: Long) {
            println("{myName}: bytes to read: {bytes}");
-           connection.updateStatus("Reading {bytes} OCCI bytes");
+           //connection.updateStatus("Reading {bytes} OCCI bytes");
          }
 
         // The onRead callback is called when some more data has been read into
@@ -187,7 +187,7 @@ function processStartEvent(event: Event) {
         tempComputer.setCores(1); // default - not always accurate
         tempComputer.setMemory(1024); // default - not always accurate
         tempComputer.setArchitecture(OCCIComputeType.Architecture.x86);
-        println("{myName}: Created new computer: {tempComputer.getID()}");
+        println("{myName}: Instantiating computer: {tempComputer.getID()}");
     }
 }
 /**
@@ -252,6 +252,7 @@ function processEndEvent(event: Event) {
         newcomputer.setArchitecture(tempComputer.getArchitecture());
         newcomputer.setHostname(tempComputer.getHostname());
         println("{myName}: *************** Storing computer new host:{newcomputer.getHostname()} ID:{newcomputer.getID()} Mem:{newcomputer.getMemory()}");
+        connection.updateStatus("{myName}: Storing {newcomputer.getHostname()} ID:{newcomputer.getID()}");
 
         controller.dataManager.insertComputeType(newcomputer);
 
@@ -263,6 +264,8 @@ function processEndEvent(event: Event) {
 
     } else if (event.qname.name.toLowerCase() == "storage" and event.level == 2) {
         println("{myName}: Detected storage");
+        connection.updateStatus("{myName}: Detected storage");
+
         for (qname in event.getAttributeNames()) {
             var value = event.getAttributeValue(qname);
             println("{myName}: attribute qname: {qname} value: {value}");
@@ -330,16 +333,15 @@ function processEndEvent(event: Event) {
         var ip : String = event.getAttributeValue("ip");
         var hrefNIC : String = event.getAttributeValue("href");
         println("{myName}: Detected nic, ip: {ip}, href={hrefNIC}");
+        connection.updateStatus("{myName}: Detected NIC {ip}");
 
         //
         // TBD
         // Need way to add network to OCCI Compute Type.
         //
-        for (qname in event.getAttributeNames()) {
-            var value = event.getAttributeValue(qname);
-            println("{myName}: attribute qname: {qname} value: {value}");
-            // Store the value in this collection
-        }
+        // Next line commented out because it returns a responseCode: 404
+        //OCCINetworkParser.getNetwork(hrefNIC);
+
     } else if (event.qname.name.toLowerCase() == "link" ) {
         println("{myName}: Detected link");
         for (qname in event.getAttributeNames()) {
@@ -347,8 +349,15 @@ function processEndEvent(event: Event) {
             println("{myName}: attribute qname: {qname} value: {value}");
             // Store the value in this collection
         }
+    } else if (event.qname.name.toLowerCase() == "network" ) {
+        println("{myName}: Detected end of network.........");
+        for (qname in event.getAttributeNames()) {
+            var value = event.getAttributeValue(qname);
+            println("{myName}: attribute qname: {qname} value: {value}");
+            // Store the value in this collection
+        }
     } else  {
-        println("{myName}: Unprocessed Event: {event.qname.name}");
+        println("{myName}: Unprocessed end Event: {event.qname.name}");
     }
 
 

@@ -103,7 +103,10 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
 
         var request : HttpRequest = HttpRequest {
            // TBD: Actually, need to get the path to the resource
-            location: "{domainURI}";
+           // For OCCI/CMDI Demo, need to add a /compute.
+           // Would much rather inspect the response and follow links based on
+           // RDFa.
+            location: "{domainURI}/compute";
 
             headers: [contentHeader, acceptHeader, agentHeader, versionHeader, authenticationHeader]
             method: HttpRequest.GET
