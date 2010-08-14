@@ -13,9 +13,8 @@
 package com.r2ad.cloud.cloudclient.parsers.storage;
 /*
  * The <code>CDMIContainerDetails</code> sends a CDMI GET request to get the contents of
- * a CDMI complient container resource.
+ * a CDMI compliant container resource.
  * This version uses the PullParser API to parse results in JSON.
- * Modeled after the YahooSearchTest code from the Javafx Class.
  * Created on Mar 7, 2010, 10:51:23 PM
  * @copyright Copyright 2010, R2AD, LLC.
  * @author behrens@r2ad.com
@@ -24,7 +23,6 @@ package com.r2ad.cloud.cloudclient.parsers.storage;
 import java.io.InputStream;
 import javafx.data.pull.Event;
 import javafx.data.pull.PullParser;
-//import java.lang.Exception;
 import javafx.io.http.HttpHeader;
 import com.r2ad.cloud.cloudclient.controller.Controller;
 import javafx.io.http.HttpRequest;
@@ -35,104 +33,99 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * @author JavaFX@r2ad.com
- */
+* Obtain the controller via the singleton - this is temporary code:
+*/
+public var controller: Controller = bind controller.controller;
+var myName = "CDMIContainerDetails";
+var storageItem : OCCIStorageType;
+var objectURI : URI;
+var objectURIText: String;
+//var result: CDMIContainer;
+var result: OCCIStorageType;
+var connection = controller.dataManager.getStorageConnection();
 
+var objectID: String;
 
-    /**
-    * Obtain the controller via the singleton - this is temporary code:
-    */
-    public var controller: Controller = bind controller.controller;
-    var myName = "CDMIContainerDetails";
-    var storageItem : OCCIStorageType;
-    var objectURI : URI;
-    var objectURIText: String;
-    //var result: CDMIContainer;
-    var result: OCCIStorageType;
-    var connection = controller.dataManager.getStorageConnection();
+/*
+** specify Locale.US since months are in english
+** example: 2010-06-02T16:58:36
+*/
+def timeFormat: SimpleDateFormat = new SimpleDateFormat ("yyyy-dd-MM'T'HH:mm:ss", Locale.US);
 
-    var objectID: String;
+// Information about all relevant cloud nodes
+//public var cloudNodes: NodeModel[];
 
-    /*
-    ** specify Locale.US since months are in english
-    ** example: 2010-06-02T16:58:36
-    */
-    def timeFormat: SimpleDateFormat = new SimpleDateFormat ("yyyy-dd-MM'T'HH:mm:ss", Locale.US);
+public function getContainerDetails(relativeURL: String) : Void {
+    var resultsProcessor: function(is: InputStream) : Void;
 
-    // Information about all relevant cloud nodes
-    //public var cloudNodes: NodeModel[];
+    println("{myName}: getDetails from {relativeURL} to: {connection}");
 
-    public function getContainerDetails(relativeURL: String) : Void {
-        var resultsProcessor: function(is: InputStream) : Void;
+    var acceptHeader = HttpHeader {
+           name: HttpHeader.ACCEPT,
+           value:"application/vnd.org.snia.cdmi.container+json"
+        };
+    var contentHeader = HttpHeader {
+           name: HttpHeader.CONTENT_TYPE;
+           value:"application/vnd.org.snia.cdmi.container+json"
+        };
+    var request : HttpRequest = HttpRequest {
+       // TBD: Actually, need to get the path to the resource
+        location: "{connection.connection}/{relativeURL}";
+        headers: [contentHeader, acceptHeader]
+        method: HttpRequest.GET
 
-        println("{myName}: getDetails from {relativeURL} to: {connection}");
-
-        var acceptHeader = HttpHeader {
-               name: HttpHeader.ACCEPT,
-               value:"application/vnd.org.snia.cdmi.container+json"
-            };
-        var contentHeader = HttpHeader {
-               name: HttpHeader.CONTENT_TYPE;
-               value:"application/vnd.org.snia.cdmi.container+json"
-            };
-        var request : HttpRequest = HttpRequest {
-           // TBD: Actually, need to get the path to the resource
-            location: "{connection.connection}/{relativeURL}";
-            headers: [contentHeader, acceptHeader]
-            method: HttpRequest.GET
-
-            onStarted: function() {
-               println("{myName}: onStarted - started performing method");
+        onStarted: function() {
+           println("{myName}: onStarted - started performing method");
+        }
+        onConnecting: function() { println("{myName}:Connecting to {request.location}") }
+        onDoneConnect: function() { println("{myName}:doneConnect") }
+        onReadingHeaders: function() { println("{myName}:readingHeaders...") }
+        onResponseCode: function(code:Integer) {
+            println("{myName}: responseCode: {code}");
+            if (code == 405) {
+                println("{myName}: Not Allowed!  Return FAIL");
+                connection.updateStatus("{myName}:Code 405 - not allowed", true);
             }
-            onConnecting: function() { println("{myName}:Connecting to {request.location}") }
-            onDoneConnect: function() { println("{myName}:doneConnect") }
-            onReadingHeaders: function() { println("{myName}:readingHeaders...") }
-            onResponseCode: function(code:Integer) { 
-                println("{myName}: responseCode: {code}");
-                if (code == 405) {
-                    println("{myName}: Not Allowed!  Return FAIL");
-                    connection.updateStatus("{myName}:Code 405 - not allowed", true);
-                }
-                if (code == 400) {
-                    println("{myName}: Bad Request!  Return FAIL");
-                    connection.updateStatus("{myName}:Code 400 - Bad Request", true);
-                }
-                if (code == 500) {
-                    println("{myName}: Internal error  Return FAIL");
-                    connection.updateStatus("{myName}:Code 500 - Internal Error", true);
-                }
-                if (code == 200) {
-                    println("{myName}: Successful Connection");
-                }                
+            if (code == 400) {
+                println("{myName}: Bad Request!  Return FAIL");
+                connection.updateStatus("{myName}:Code 400 - Bad Request", true);
             }
-            onResponseMessage: function(msg:String) { println("responseMessage: {msg}") }
-            onToRead: function(bytes: Long) { println("bytes to read: {bytes}") }
-
-            // The onRead callback is called when some more data has been read into
-            // the input stream's buffer.  The input stream will not be available until
-            // the onInput call back is called, but onRead can be used to show the
-            // progress of reading the content from the location.
-            onRead: function(bytes: Long) {
-                println("{myName}: bytes read: {bytes}");
+            if (code == 500) {
+                println("{myName}: Internal error  Return FAIL");
+                connection.updateStatus("{myName}:Code 500 - Internal Error", true);
             }
-
-            onInput: function(is: InputStream) {
-                resultsProcessor = processResults;
-                resultsProcessor(is);
-                try {
-                    println("{myName}: bytes of content available: {is.available()}");
-                } finally {
-                    is.close();
-                    var debugStorage: OCCIStorageType =controller.dataManager.getStorageType(objectURIText);
-                    println("{myName}: Finished Parsing container: {debugStorage.getString()}");
-                    connection.updateStatus("Parsed: {relativeURL}");
-                }
-
+            if (code == 200) {
+                println("{myName}: Successful Connection");
             }
         }
-        request.start();
+        onResponseMessage: function(msg:String) { println("responseMessage: {msg}") }
+        onToRead: function(bytes: Long) { println("bytes to read: {bytes}") }
 
+        // The onRead callback is called when some more data has been read into
+        // the input stream's buffer.  The input stream will not be available until
+        // the onInput call back is called, but onRead can be used to show the
+        // progress of reading the content from the location.
+        onRead: function(bytes: Long) {
+            println("{myName}: bytes read: {bytes}");
+        }
+
+        onInput: function(is: InputStream) {
+            resultsProcessor = processResults;
+            resultsProcessor(is);
+            try {
+                println("{myName}: bytes of content available: {is.available()}");
+            } finally {
+                is.close();
+                var debugStorage: OCCIStorageType =controller.dataManager.getStorageType(objectURIText);
+                println("{myName}: Finished Parsing container: {debugStorage.getString()}");
+                connection.updateStatus("Parsed: {relativeURL}");
+            }
+
+        }
     }
+    request.start();
+
+}
 
 public function processResults(is: InputStream) : Void {
     def parser = PullParser { documentType: PullParser.JSON; input: is; onEvent: parseEventCallback; };
@@ -147,7 +140,9 @@ public function processResults(is: InputStream) : Void {
 def parseEventCallback = function(event: Event) {
     //START_VALUE=25, START_ELEMENT=1, START_DOCUMENT=7, START_ARRAY=16
     //START_ARRAY_ELEMENT=17, END_ARRAY_ELEMENT=18, END_ELEMENT=2
-    //println("{myName}:  event.type: {event.type} event.name: {event.name} event.text={event.text} event.level={event.level} ");
+    // END_DOCUMENT=8, END_ELEMENT=2, END_ARRAY_ELEMENT=18, TEXT=4
+    // START_ARRAY_ELEMENT=17, END_ARRAY_ELEMENT=18,
+    //println(">>> {myName}:  event.type: {event.type} event.name: {event.name} event.text={event.text} event.level={event.level} ");
     if (event.type == PullParser.START_DOCUMENT) {
         println("{myName}: ** Creating new empty Storage Model");
         result = OCCIStorageType{}
@@ -217,17 +212,25 @@ def parseEventCallback = function(event: Event) {
                datetime = timeFormat.parse(event.text);
                result.setModifiedTime(datetime);
             }
-        }
+        } 
 
-        // Not Parsing these events:
+        // Not Parsing these events at this time:
         // OCCI/NFS event.text= event.level=1
         // exports event.text= event.level=0
         // objectURI event.text=/BOB/ event.level=0
         // parentURI event.text=/ event.level=0
         // capabilitiesURI event.text=/cdmi_capabilities/container/default event.level=0
-        // children event.text= event.level=0
+
+     } // End Value
+
+     if (event.type == PullParser.TEXT) {
+        if (event.name == "children" and event.level == 0) {
+            // Example: >>> CDMIContainerDetails:  event.type: 4 event.name: children event.text=foo.txt event.level=0
+            println("{myName}: >>> child object identified: {event.text} for parent {objectURIText}");
+        }
 
      }
+
 }
 
    

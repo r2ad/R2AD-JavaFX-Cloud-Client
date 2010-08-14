@@ -16,15 +16,19 @@ import java.io.InputStream;
 import javafx.data.pull.Event;
 import javafx.data.pull.PullParser;
 import org.occi.model.OCCIStorageType;
-import java.lang.Exception;
 import javafx.io.http.HttpHeader;
 import com.r2ad.cloud.cloudclient.controller.Controller;
 import javafx.io.http.HttpRequest;
 
-/**
- * @author JavaFX@r2ad.com
+/*
+ * The <code>CDMIObjectParser</code> sends a CDMI GET request to get an object
+ * from a CDMI compliant container resource.
+ * This version uses the PullParser API to parse results in JSON.
+ * Modeled after the YahooSearchTest code from the Javafx Class.
+ * Created on Mar 7, 2010, 10:51:23 PM
+ * @copyright Copyright 2010, R2AD, LLC.
+ * @author behrens@r2ad.com
  */
-
     /**
     * Obtain the controller via the singleton - this is temporary code:
     */
@@ -115,37 +119,38 @@ def parseEventCallback = function(event: Event) {
     }
 }
 
-    // Example validation function which cna be used for some fields
-    function validateZipCode(zipcode:String): Boolean {
-        //
-        // Zip Code Format -> 12345 or 12345-1234
-        //
-        try {
-            if(zipcode.length() == 5) {
-                var zipCodeInt = java.lang.Integer.valueOf(zipcode).intValue();
-                return (zipCodeInt > 0);
-            } else if (zipcode.length() == 10) {
-                var dashIndex = zipcode.indexOf("-");
-                if(dashIndex != 5) return false;
-                var firstPart = zipcode.substring(0, dashIndex);
-                var zipCodeInt = java.lang.Integer.valueOf(firstPart).intValue();
-                if(zipCodeInt <= 0) { return false; }
-                var secondPart = zipcode.substring(0, dashIndex);
-                zipCodeInt = java.lang.Integer.valueOf(secondPart).intValue();
-                return (zipCodeInt > 0);
-            }
-        } catch (e:Exception) { }
-        return false;
+public function sendFile(): Void {
+    /**
+     EXAMPLE:
+    Perform a PUT to the new data object URI:
+    PUT /MyContainer HTTP/1.1
+    Host: cloud.example.com
+    Accept: application/vnd.org.snia.cdmi.container+json
+    Content-Type: application/vnd.org.snia.cdmi.container+json
+    X-CDMI-Specification-Version: 1.0
+    {
+    "metadata" : {
+    }
+    }
+    HTTP/1.1 201 Created
+    Content-Type: application/vnd.org.snia.cdmi.container+json
+    X-CDMI-Specification-Version: 1.0
+    {
+    "objectURI" : "/MyContainer/",
+    "objectID" : "AABwbQAQ7EacyeWGVRGqCA==",
+    "parentURI" : "/",
+    "domainURI" : "/cdmi_domains/MyDomain/",
+    "capabilitiesURI" : "/cdmi_capabilities/Container/",
+    "completionStatus" : "Complete",
+    "metadata" : {
+    "cdmi_size" : "0"
+    },
+    "childrenrange" : "0-0",
+    "children" : [
+    ]
     }
 
+**/;
+}
 
-    // Trim the string if length is greater than specified length
-    function trimString(string:String, length:Integer) : String {
-        if(string == null) return "";
-        if(string.length() > length) {
-            return "{string.substring(0, length).trim()}...";
-        } else {
-            return string;
-        }
-    }
 

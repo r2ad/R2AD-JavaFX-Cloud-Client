@@ -45,7 +45,8 @@ public class StorageEditorView extends AppView {
     var accessTimeText: String = "Access Time:";
     var createTimeText: String = "Create Time:";
     var modifiedTimeText: String = "Modified Time:";
-    var naTimeText: String = "N/A";
+    var filesLabelText: String = "File(s):";
+    var notAvailableText: String = "N/A";
     //var updateMode: Boolean;
 
     /*
@@ -75,21 +76,27 @@ public class StorageEditorView extends AppView {
 
     var accessTimeLabel: Label = Label {
         text: bind "{accessTimeText} {if (storageType.getAccessTime()==null)
-            {naTimeText} else timeFormat.format(storageType.getAccessTime()) }"
+            {notAvailableText} else timeFormat.format(storageType.getAccessTime()) }"
         textFill: defaultTextColor
         font: smallerTextFont
     }
 
     var createTimeLabel: Label = Label {
         text: bind "{createTimeText} {if (storageType.getCreateTime()==null)
-            {naTimeText} else timeFormat.format(storageType.getCreateTime()) }"
+            {notAvailableText} else timeFormat.format(storageType.getCreateTime()) }"
         textFill: defaultTextColor
         font: smallerTextFont
     }
 
     var modifiedTimeLabel: Label = Label {
         text: bind "{modifiedTimeText} {if (storageType.getModifiedTime()==null)
-            {naTimeText} else timeFormat.format(storageType.getModifiedTime())}"
+            {notAvailableText} else timeFormat.format(storageType.getModifiedTime())}"
+        textFill: defaultTextColor
+        font: smallerTextFont
+    }
+
+    var filesLabel: Label = Label {
+        text: bind filesLabelText;
         textFill: defaultTextColor
         font: smallerTextFont
     }
@@ -162,11 +169,19 @@ public class StorageEditorView extends AppView {
         layoutInfo: LayoutInfo { vpos: javafx.geometry.VPos.CENTER }
     }
 
+    //
+    // Note, In order for an applet to be able to access the local drive,
+    // additional permission is required by the user.  Since this application
+    // may be deployed as a WebStart application, the security entry would need
+    // to have this added: java.io.FilePermission  read
+    // in addtion to this for HTTP requests: j2ee-application-client-permissions
+    //
     var uploadButton: Button = Button {
         text: uploadButtonText
-        disable: true
+        disable: false
         action: function() {
-           CDMIObjectChooser.uploadCDMIObject();
+           CDMIObjectChooser.setUploadCDMIObject();
+           filesLabelText = CDMIObjectChooser.getUploadFile();
         }
         onKeyPressed: function (ke: KeyEvent) {
             if (ke.code == KeyCode.VK_DOWN) {
@@ -211,6 +226,17 @@ public class StorageEditorView extends AppView {
         }
     }
 
+
+
+    var filesVBox: VBox = VBox {
+        content: [ filesLabel ]
+        spacing: 5
+        translateX: 8
+        layoutInfo: LayoutInfo {
+            height: 30
+        }
+    }
+
     var bottomButtonBox: HBox = HBox {
         translateX: 30
         translateY: 40
@@ -241,6 +267,7 @@ public class StorageEditorView extends AppView {
                 nameHBox,
                 timeVBox,
                 bottomButtonBox,
+                filesVBox
             ]
         };
     }

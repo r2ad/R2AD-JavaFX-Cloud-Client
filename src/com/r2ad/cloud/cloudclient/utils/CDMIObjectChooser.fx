@@ -22,7 +22,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import javax.swing.JFileChooser;
 
-public function uploadCDMIObject() : Void {
+var uploadOnCreate = true;
+var uploadFile: File = null;
+
+public function setUploadCDMIObject() : Void {
     // File chooser
     def extensions = ["*.*"];
     def chooser = new JFileChooser();
@@ -31,10 +34,17 @@ public function uploadCDMIObject() : Void {
 
      if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(null)) {
         inputFile = chooser.getSelectedFile();
-        println("----Source file = {inputFile}");
+        uploadFile = inputFile;
+        println("----Source file = {uploadFile}");
+        // Get the number of bytes in the file
+        var length = uploadFile.length();
         inputStream = new FileInputStream(inputFile);
-        println("----TBD: Put file as CDMI Object code goes here ----");
+        println("----TBD: Put file as CDMI Object code goes here ----, size= {length}");
      }
+}
 
-
+public function getUploadFile(): String {
+    var uploadFileString="N/A";
+    if (uploadFile != null) uploadFileString=uploadFile.toString();
+    return uploadFileString;
 }

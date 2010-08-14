@@ -1,0 +1,11 @@
+// Common Strings, DO NOT Localize
+"English" = "English"
+"Japanese" = "日本語"
+"Brazilian Portuguese" = "Português do Brasil"
+
+// Strings for localization.
+"NB_Title" = "Cloud Client in JavaFX"
+"userNamePrompt" = "User Name:"
+"userNameMessage" = "Enter cloud user name"
+"PassPhrasePrompt" = "Pass Phrase:"
+"cloudURLPrompt" = "Enter Cloud URL:"

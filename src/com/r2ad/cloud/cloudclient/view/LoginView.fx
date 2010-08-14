@@ -54,6 +54,8 @@ import java.lang.Void;
 import javafx.util.Properties;
 import java.io.InputStream;
 import java.io.OutputStream;
+import javafx.scene.effect.BoxBlur;
+
 
 /**
  * Shows the list of tasks categorized as High, Medium and Low.
@@ -65,14 +67,17 @@ public class LoginView extends AppView {
     public var alternate: Boolean = false;
     var loggedIn: Boolean = false;
     var devPassword: String = "";
+    var blurConnectionInfo: Boolean;
+    var remembered: Boolean = false;
 
     var headingLabelText: String = "User Authentication";
     var loginButtonText: String = "Login";
     var loginFailedMessage: String = "Login unsuccessful, try again...";
-    var nameLabelText: String = "User Name:";
-    var nameFieldPrompt: String = "Enter cloud user name";
-    var passwordLabelText: String = "Pass Phrase:";
-    var urlFieldPrompt: String = "Enter Cloud URL";
+    var nameLabelText: String = ##[userNamePrompt]"User Name:";
+    var nameFieldPrompt: String = ##[userNameMessage]"Enter cloud user name";
+    var passwordLabelText: String = ##[PassPhrasePrompt]"";
+    var urlFieldPrompt: String = ##[cloudURLPrompt]"Enter Cloud URL";
+    var NBTitle:String = ##[NB_Title]"";
 
 
     // Used for preference data...
@@ -189,7 +194,8 @@ public class LoginView extends AppView {
 
     var nameField: TextBox = TextBox {
         blocksMouse: true
-        columns: 20
+        effect: bind if (blurConnectionInfo) BoxBlur { width: 15 height: 15 iterations: 3 } else null
+        columns: bind (screenWidth/12) - 4
         promptText: nameFieldPrompt
         selectOnFocus: false
         onKeyPressed: function (e: KeyEvent) {
@@ -260,7 +266,8 @@ public class LoginView extends AppView {
 
     var urlField: TextBox = TextBox {
         blocksMouse: true
-        columns: bind screenWidth - 20
+        effect: bind if (blurConnectionInfo) BoxBlur { width: 15 height: 15 iterations: 3 } else null
+        columns: bind (screenWidth/12) - 4
         selectOnFocus: false
         promptText: urlFieldPrompt
         // Default URL:
@@ -282,10 +289,15 @@ public class LoginView extends AppView {
     var strokeColor: Color = Color.BLUE;
     def rememberFlag : CheckBox =
         CheckBox {
-        selected:true
+        selected: bind remembered with inverse
         onMouseClicked:function(e:MouseEvent) : Void {
             strokeColor = if(rememberFlag.selected) Color.BLUE else Color.BLACK;
         }
+    };
+
+    def blurConnectionFlag : CheckBox =
+        CheckBox {
+        selected: bind blurConnectionInfo with inverse
     };
 
     var saveBox: HBox = HBox {
@@ -295,8 +307,12 @@ public class LoginView extends AppView {
             rememberFlag,
             Label {
                 text: "Remember"
-                textFill: Color.ALICEBLUE
-    }]}
+                textFill: Color.ALICEBLUE },
+            blurConnectionFlag,
+            Label {
+                text: "Blur Connection Info"
+                textFill: Color.ALICEBLUE }
+    ]}
 
 
     var urlPanelBox: VBox = VBox {
@@ -352,7 +368,7 @@ public class LoginView extends AppView {
        } else {
           println("Checking if CDMI Preferences are present.....");
        }
-
+       println("NBTitle is {NBTitle}");
        if (checkStore() == true) {
            restoreData();
        } else {
@@ -376,15 +392,21 @@ public class LoginView extends AppView {
 
        println("Restored Preferences: remember: {propsIn.get("remember")} / URL:{propsIn.get("urlField")}");
        if (propsIn.get("remember") != null) {
-           if(propsIn.get("remember").equals("true")) {
-              urlField.text = propsIn.get("urlField");
-              nameField.text = propsIn.get("nameField");
-              passwordField.text = propsIn.get("passwordField");
-              rememberFlag.selected = true;
-           } else {
-              rememberFlag.selected = false;
-           }
-
+            if(propsIn.get("remember").equals("true")) {
+                urlField.text = propsIn.get("urlField");
+                nameField.text = propsIn.get("nameField");
+                passwordField.text = propsIn.get("passwordField");
+                rememberFlag.selected = true;
+                blurConnectionInfo =  propsIn.get("blurConnectionInfo").equals("true");
+                remembered = true;
+            } else {
+                rememberFlag.selected = false;
+                remembered = false;
+                blurConnectionInfo = false;
+                urlField.text = "";
+                nameField.text = "";
+                passwordField.text = "";
+            }
        }
 
     }
@@ -393,6 +415,8 @@ public class LoginView extends AppView {
         var outputStream: OutputStream = res.openOutputStream(true);
         var propsOut: Properties = Properties {};
         propsOut.put("remember", "false");
+        remembered = false;
+        blurConnectionInfo = false;
        try {
            propsOut.store(outputStream);
        } finally {
@@ -408,6 +432,7 @@ public class LoginView extends AppView {
         propsOut.put("urlField", "{urlField.text}");
         propsOut.put("nameField", "{nameField.text}");
         propsOut.put("passwordField", "{passwordField.text}");
+        propsOut.put("blurConnectionInfo", "{blurConnectionFlag.selected}");
        try {
            propsOut.store(outputStream);
        } finally {

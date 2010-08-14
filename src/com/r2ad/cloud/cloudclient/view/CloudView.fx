@@ -23,7 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextBox;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -34,6 +33,7 @@ import javafx.scene.layout.LayoutInfo;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.control.ToggleGroup;
 import java.lang.Void;
 
 /**
@@ -42,7 +42,7 @@ import java.lang.Void;
  */
 public class CloudView extends AppView {
 
-    public var buttonGroup: ToggleGroup = new ToggleGroup;
+    def buttonGroup: ToggleGroup  = ToggleGroup { } ;
     var addAction: Boolean = false;
     var deleteAction: Boolean = false;
     var currentConnection: CloudConnection;
@@ -57,7 +57,8 @@ public class CloudView extends AppView {
     var computeText: String = "Compute";
     var storageText: String = "Storage";
     var statusButtonText: String = "Log";
-    var viewTitleText: String = "R2AD Cloud Client";
+    var versionNumber: String = "v0.1.9";
+    var viewTitleText: String = "R2AD Cloud Client {versionNumber}";
 
     var progress: Number = bind progressVal on replace {
         if (progress >= 100) {
@@ -102,10 +103,10 @@ public class CloudView extends AppView {
         populateTree();
     }
 
-    var selectedToggle: Toggle = bind buttonGroup.selectedToggle on replace {
+    var selectedToggle: Toggle = bind buttonGroup.selectedToggle on replace {        
         if (selectedToggle != null) {
             populateTree();
-        }
+        } 
     }
 
     public function loadComputeList() {

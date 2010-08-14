@@ -28,7 +28,9 @@ import javafx.util.Math;
  // replaceSelection("password") on the password field after it’s initialization
  // ie:  passwordField.replaceSelection("mypasswrd");
 public class PasswordBox extends TextBox {
+    public var substituteChar = "#";
     public-read var password = "";
+
 
     override function replaceSelection(arg) {
         var pos1 = Math.min(dot, mark);
@@ -55,7 +57,7 @@ public class PasswordBox extends TextBox {
     function getStars(len: Integer): String {
         var result: String = "";
         for (i in [1..len]) {
-            result = "{result}*";
+            result = "{result}{substituteChar}";
         }
         result;
     }

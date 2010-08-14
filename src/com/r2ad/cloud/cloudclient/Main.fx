@@ -47,6 +47,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import com.r2ad.cloud.cloudclient.view.AppView;
 import com.r2ad.cloud.cloudclient.controller.Controller;
+import java.util.Locale;
 
 /**
  * Application's Main class that instantiates the stage and initilizes
@@ -79,6 +80,7 @@ var bgRect:Rectangle = Rectangle {
     arcWidth: bind if (not mobile) 15 else 0
     arcHeight: bind if (not mobile) 15 else 0
 
+    // Move entire window whenever any area is dragged:
     /*
     onMouseDragged: function(me: MouseEvent) {
         if (not browser and not mobile) {
@@ -132,6 +134,13 @@ var boundWidth = bind stage.width on replace {
       AppView.screenWidth = stage.width;
 
 };
+
+println("Copyright (c) 2010, R2AD, LLC");
+
+// Set Default Locale to English
+// Can't set this without getting a security error when deployed as a webstart
+// java.util.PropertyPermission user.language write
+Locale.setDefault(new Locale("en", "US"));
 
 // Show the first screen.
 controller.showComputeList();

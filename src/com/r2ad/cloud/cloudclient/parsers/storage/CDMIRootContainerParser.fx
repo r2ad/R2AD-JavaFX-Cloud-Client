@@ -25,7 +25,8 @@ import java.lang.Thread;
 
 
 /*
- * The <code>CDMIRootcontainerParser</code> is the CDMI Root Parser which implements a portion of the CDMI specification.
+ * The <code>CDMIRootcontainerParser</code> is the CDMI Root Parser which
+ * implements a portion of the CDMI specification.
  * This version uses the PullParser API to parse results in JSON.
  * Created on Mar 7, 2010, 10:51:23 PM
  * @author behrens@r2ad.com
@@ -54,7 +55,6 @@ import java.lang.Thread;
                     action: function() {
                          println("{myName}: Timer Thread ID: {Thread.currentThread()}");
                          controller.dataManager.getStorageConnection().updateStatus("1sec rootCDMI");
-
                     }
                 }
                 KeyFrame {
@@ -63,7 +63,8 @@ import java.lang.Thread;
                     action: function() {
                          controller.dataManager.getStorageConnection().updateStatus("2 sec rootCDMI");
                     }
-                }            ]
+                }
+            ]
         }
 
     public function allDone () {
@@ -74,21 +75,8 @@ import java.lang.Thread;
      */
     public function getRootCDMIContainers () {
       println("{myName}: Main Entry Thread ID: {Thread.currentThread()}");
-
-      // Experimental code which uses the library: import crudfx.util.Waiter;
-      // var waiter: crudfx.util.Waiter = crudfx.util.Waiter {
-      //      action:parseResource
-      //      onDone:allDone
-      // }
-      // waiter.serve();
-
       parseResource();
-
     }
-
-
-    // Information about all relevant cloud nodes
-    //public var cloudNodes: NodeModel[];
 
     function parseResource() : Void {
 
@@ -164,10 +152,8 @@ import java.lang.Thread;
                 }
             }
         }
-        request.start();
-            
+        request.start();       
     }
-
 
 /**
  * This is the main parser for a CDMI resource.  It expects to find contianers present.
@@ -177,7 +163,7 @@ public function processResults(is: InputStream) : Void {
     def parser = PullParser { documentType: PullParser.JSON; input: is; onEvent: parseEventCallback; };
     parser.parse();
     is.close();
-    println("{myName} Closing IS");
+    println("{myName} Closing input stream");
 }
 
 
@@ -186,53 +172,14 @@ def parseEventCallback = function(event: Event) {
     //START_ARRAY_ELEMENT=17, END_ARRAY_ELEMENT=18, END_ELEMENT=2
     //println("event.type: {event.type} event.name: {event.name} event.text={event.text} event.level={event.level} ");
 
-
     if (event.type == PullParser.END_ARRAY_ELEMENT) {
         if (event.name == "children" and event.level == 0) {
-            if (event.text.length() > 0) {
-                
+            if (event.text.length() > 0) {                
                 // For now - get the details of this container from the net resource.
                 // This in turn populates the tree.
-                //if ( event.text.equals("BOB/")) {
                 CDMIContainerDetails.getContainerDetails(event.text);
-                //}
             }
         }
     }
 }
-
-    // Example validation function which cna be used for some fields
-    function validateZipCode(zipcode:String): Boolean {
-        //
-        // Zip Code Format -> 12345 or 12345-1234
-        //
-        try {
-            if(zipcode.length() == 5) {
-                var zipCodeInt = java.lang.Integer.valueOf(zipcode).intValue();
-                return (zipCodeInt > 0);
-            } else if (zipcode.length() == 10) {
-                var dashIndex = zipcode.indexOf("-");
-                if(dashIndex != 5) return false;
-                var firstPart = zipcode.substring(0, dashIndex);
-                var zipCodeInt = java.lang.Integer.valueOf(firstPart).intValue();
-                if(zipCodeInt <= 0) { return false; }
-                var secondPart = zipcode.substring(0, dashIndex);
-                zipCodeInt = java.lang.Integer.valueOf(secondPart).intValue();
-                return (zipCodeInt > 0);
-            }
-        } catch (e:Exception) { }
-        return false;
-    }
-
-
-    // Trim the string if length is greater than specified length
-    function trimString(string:String, length:Integer) : String {
-        if(string == null) return "";
-        if(string.length() > length) {
-            return "{string.substring(0, length).trim()}...";
-        } else {
-            return string;
-        }
-    }
-
   

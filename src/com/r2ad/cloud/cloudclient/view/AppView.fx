@@ -347,10 +347,10 @@ public abstract class AppView extends CustomNode {
      * or project. Delete button will invoke view's deleteData() function whereas
      * cancel button will just dispose the popup.
      */
-    public function deleteConfirmation(taskName: String) {
+    public function deleteConfirmation(itemName: String) {
         var deleteButtonBox: HBox;
         var deleteText: Text = Text {
-            content: bind "Are you sure you want to delete {taskName}?"
+            content: bind "Are you sure you want to delete {itemName}?"
             font: defaultTextFont
             wrappingWidth: bind popupWidth - 30
             translateY: 40
