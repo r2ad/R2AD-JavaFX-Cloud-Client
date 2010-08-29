@@ -20,11 +20,11 @@ import java.lang.Exception;
  * @copyright Copyright 2010, R2AD, LLC.
  * @author behrens@r2ad.com
  */
-public class stringUtilities {
+public class StringUtilities {
 
 
     // Example validation function which cna be used for some fields
-    function validateZipCode(zipcode:String): Boolean {
+    public function validateZipCode(zipcode:String): Boolean {
         //
         // Zip Code Format -> 12345 or 12345-1234
         //
@@ -48,10 +48,31 @@ public class stringUtilities {
 
 
     // Trim the string if length is greater than specified length
-    function trimString(string:String, length:Integer) : String {
+    public function trimString(string:String, length:Integer) : String {
         if(string == null) return "";
         if(string.length() > length) {
             return "{string.substring(0, length).trim()}...";
+        } else {
+            return string;
+        }
+    }
+
+    // Remove any trailing spaces.  This is useful for many fields.
+    public function trimTrailingSpaces(string:String) : String {
+        if(string !=null and string.length() > 0) {
+            var text: String = string.replaceAll("\\s+$", "");
+            return text;
+        } else {
+            return string;
+        }
+    }
+
+    // Remove any trailing slashes.  This is useful for filepaths.
+    public function trimSlashes(string:String) : String {
+        if(string !=null and string.length() > 0) {
+            var text: String = string.replaceAll("\\/+$", "");
+            //println("trimSlashes afterwords: [{text}]");
+            return text;
         } else {
             return string;
         }

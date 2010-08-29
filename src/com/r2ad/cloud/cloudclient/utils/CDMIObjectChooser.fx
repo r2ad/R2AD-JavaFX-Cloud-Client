@@ -21,30 +21,32 @@ package com.r2ad.cloud.cloudclient.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import javax.swing.JFileChooser;
+import org.occi.model.StoredObject;
 
-var uploadOnCreate = true;
 var uploadFile: File = null;
 
 public function setUploadCDMIObject() : Void {
     // File chooser
     def extensions = ["*.*"];
     def chooser = new JFileChooser();
-    var inputFile: File;
     var inputStream: FileInputStream;
+    var storedObject: StoredObject;
 
      if (JFileChooser.APPROVE_OPTION == chooser.showOpenDialog(null)) {
-        inputFile = chooser.getSelectedFile();
-        uploadFile = inputFile;
+        uploadFile = chooser.getSelectedFile();
         println("----Source file = {uploadFile}");
         // Get the number of bytes in the file
         var length = uploadFile.length();
-        inputStream = new FileInputStream(inputFile);
-        println("----TBD: Put file as CDMI Object code goes here ----, size= {length}");
+        inputStream = new FileInputStream(uploadFile);
+        println("Creating a store object for container, size= {length}");
+        //
+        // This is temporarily here - it should belong in the model, as part of an
+        // initial object or perhaps an array of objects if they item is being edited.
+        //
+        storedObject = new StoredObject(uploadFile);
      }
 }
 
-public function getUploadFile(): String {
-    var uploadFileString="N/A";
-    if (uploadFile != null) uploadFileString=uploadFile.toString();
-    return uploadFileString;
+public function getUploadFile(): File {
+    return uploadFile;
 }

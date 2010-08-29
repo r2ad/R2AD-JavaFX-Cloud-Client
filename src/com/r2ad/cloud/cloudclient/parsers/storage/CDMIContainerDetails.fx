@@ -217,7 +217,6 @@ def parseEventCallback = function(event: Event) {
         // Not Parsing these events at this time:
         // OCCI/NFS event.text= event.level=1
         // exports event.text= event.level=0
-        // objectURI event.text=/BOB/ event.level=0
         // parentURI event.text=/ event.level=0
         // capabilitiesURI event.text=/cdmi_capabilities/container/default event.level=0
 

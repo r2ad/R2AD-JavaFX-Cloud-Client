@@ -33,6 +33,7 @@ import javafx.io.http.HttpRequest;
     * Obtain the controller via the singleton - this is temporary code:
     */
     public var controller: Controller = bind controller.controller;
+    var myName = "CDMIObjectParser";
 
     // Information about all relevant cloud nodes
     //public var cloudNodes: NodeModel[];
@@ -40,7 +41,7 @@ import javafx.io.http.HttpRequest;
     public function getContainers() : Void {
         var resultsProcessor: function(is: InputStream) : Void;
         var connection = controller.dataManager.getStorageConnection();
-        println("Connecting to: {connection}");
+        println("{myName} Connecting to: {connection}");
 
         var acceptHeader = HttpHeader {
                name: HttpHeader.ACCEPT,
@@ -56,7 +57,7 @@ import javafx.io.http.HttpRequest;
             method: HttpRequest.GET
 
             onStarted: function() {
-               println("onStarted - started performing method");
+               println("{myName} onStarted - started performing method");
             }
             onConnecting: function() { println("connecting...") }
             onDoneConnect: function() { println("doneConnect") }
@@ -70,14 +71,14 @@ import javafx.io.http.HttpRequest;
             // the onInput call back is called, but onRead can be used to show the
             // progress of reading the content from the location.
             onRead: function(bytes: Long) {
-                println("bytes read: {bytes}");
+                println("{myName} bytes read: {bytes}");
             }
 
             onInput: function(is: InputStream) {
                 resultsProcessor = processResults;
                 resultsProcessor(is);
                 try {
-                    println("bytes of content available: {is.available()}");
+                    println("{myName} bytes of content available: {is.available()}");
                 } finally {
                     is.close();
                 }
@@ -103,7 +104,7 @@ def parseEventCallback = function(event: Event) {
     println("event.type: {event.type} event.name: {event.name} event.text={event.text} event.level={event.level} ");
     if (event.type == PullParser.START_ARRAY_ELEMENT) {
        // Assume a new model is needed....
-        println("** Creating new empty Storage Object Model");
+        println("** {myName} Creating new empty Storage Object Model");
         result = OCCIStorageType{}
     }
 
@@ -111,46 +112,12 @@ def parseEventCallback = function(event: Event) {
         if (event.name == "children" and event.level == 0) {
             if (event.text.length() > 0) {
                 result.setTitle(event.text);
-                println("** Invoking dataHandler.addOCCIStorageType for {event.text}");
+                println("** {myName} Invoking dataHandler.addOCCIStorageType for {event.text}");
                 controller.dataManager.addStorageType(result);
-                println("CMDI Storage: {result}");
+                println("{myName} CMDI Storage: {result}");
             }
         }
     }
-}
-
-public function sendFile(): Void {
-    /**
-     EXAMPLE:
-    Perform a PUT to the new data object URI:
-    PUT /MyContainer HTTP/1.1
-    Host: cloud.example.com
-    Accept: application/vnd.org.snia.cdmi.container+json
-    Content-Type: application/vnd.org.snia.cdmi.container+json
-    X-CDMI-Specification-Version: 1.0
-    {
-    "metadata" : {
-    }
-    }
-    HTTP/1.1 201 Created
-    Content-Type: application/vnd.org.snia.cdmi.container+json
-    X-CDMI-Specification-Version: 1.0
-    {
-    "objectURI" : "/MyContainer/",
-    "objectID" : "AABwbQAQ7EacyeWGVRGqCA==",
-    "parentURI" : "/",
-    "domainURI" : "/cdmi_domains/MyDomain/",
-    "capabilitiesURI" : "/cdmi_capabilities/Container/",
-    "completionStatus" : "Complete",
-    "metadata" : {
-    "cdmi_size" : "0"
-    },
-    "childrenrange" : "0-0",
-    "children" : [
-    ]
-    }
-
-**/;
 }
 
 

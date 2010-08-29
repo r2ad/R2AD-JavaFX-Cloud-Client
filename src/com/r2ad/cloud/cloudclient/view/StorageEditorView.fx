@@ -26,6 +26,10 @@ import javafx.scene.layout.VBox;
 import org.occi.model.OCCIStorageType;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import org.occi.model.StoredObject;
+import java.io.File;
+import javafx.scene.control.CheckBox;
+import javafx.scene.paint.Color;
 
 /**
  * Allows the user to modify the VM details such as its name,
@@ -47,6 +51,8 @@ public class StorageEditorView extends AppView {
     var modifiedTimeText: String = "Modified Time:";
     var filesLabelText: String = "File(s):";
     var notAvailableText: String = "N/A";
+    var CDMIObjectFlag: Boolean;
+
     //var updateMode: Boolean;
 
     /*
@@ -57,17 +63,24 @@ public class StorageEditorView extends AppView {
         new SimpleDateFormat ("yyyy-dd-MM'T'HH:mm:ss", Locale.US);
 
     /**
-     * Task represented by this editor view. The task that is
-     * currently being edited.
+     * Storage Object represented by this editor view. The storage item that is
+     * currently being edited is set by the controller.
      */
     public var storageType: OCCIStorageType on replace {
         if (storageType != null) {
             nameTextBox.text = storageType.getTitle();
             nameTextBox.commit();
         } else {
+            println ("Storage Item being allocated...");
+            storageType = dataManager.createOCCIStorageType();
             nameTextBox.text = defaultNameBoxText;
             nameTextBox.commit();
         }
+        filesLabelText="File(s):";
+        var storedObject: StoredObject = storageType.getObject();
+        storedObject.setUploadFlag(false);
+        var uploadFile: File = storedObject.getFile();
+        println ("Debug - current uploadfile is {uploadFile.toString()}");
     }
 
    //
@@ -102,7 +115,7 @@ public class StorageEditorView extends AppView {
     }
 
     var headingLabel: Label = Label {
-        text: bind if (storageType != null) then editHeadingText else createHeadingText;
+        text: bind if (storageType.getTitle() != null) then editHeadingText else createHeadingText;
         textFill: defaultTextColor
         font: defaultTextFont
     }
@@ -145,15 +158,31 @@ public class StorageEditorView extends AppView {
     }
 
     var doneButton: Button = Button {
-        text: bind if (storageType != null) then doneButtonEdit else doneButtonCreate
+
+        text: bind if (storageType.getTitle() != null) then doneButtonEdit else doneButtonCreate
         action: function() {
             nameTextBox.commit();
-            var sType = dataManager.createOCCIStorageType();
-            sType.setTitle(nameTextBox.text);
-            if (storageType != null) {
-                dataManager.removeStorageType(storageType.getTitle());
+            if (storageType.getTitle() != null) {
+                //Get rid of older one first:
+                println("NOT removing older one from current model first: {storageType.getTitle()}");
+//               dataManager.removeStorageType(storageType.getTitle());
+// Do not want to actually send a delete to the server.
             }
-            dataManager.addStorageType(sType);
+            storageType.setTitle(nameTextBox.text);
+            // Update the CDMI Content type flag:
+            var storedObject: StoredObject;
+            storedObject = storageType.getObject();
+            if (storedObject != null) {
+                storedObject.setCDMIContentType(CDMIObjectFlag);
+            }            
+
+            println("Model Change: {storageType.getTitle()} Action: {doneButton.text}");
+            // Aug 2010 - added update action in support of object uploads.
+            if (doneButton.text.equals("Create")) {
+                dataManager.addStorageType(storageType);
+            } else {
+                dataManager.updateStorageType(storageType);
+            }
             controller.showStorageList();
         }
         onKeyPressed: function (ke: KeyEvent) {
@@ -176,12 +205,30 @@ public class StorageEditorView extends AppView {
     // to have this added: java.io.FilePermission  read
     // in addtion to this for HTTP requests: j2ee-application-client-permissions
     //
-    var uploadButton: Button = Button {
+    var uploadActionButton: Button = Button {
         text: uploadButtonText
         disable: false
         action: function() {
-           CDMIObjectChooser.setUploadCDMIObject();
-           filesLabelText = CDMIObjectChooser.getUploadFile();
+           var objectChooser: CDMIObjectChooser;
+           objectChooser.setUploadCDMIObject();
+           var storedObject: StoredObject;
+
+           var uploadFile: File = objectChooser.getUploadFile();
+           if (uploadFile != null) {
+                //storageType.
+                println ("Queuing object to process...file: {uploadFile.toString()}");
+                storedObject = new StoredObject(uploadFile);
+                //
+                // Set the flag which is processed AFTER the contianer is updated/created.
+                //
+                storedObject.setUploadFlag(true);
+                storedObject.setCDMIContentType(CDMIObjectFlag);
+                storageType.addObject(storedObject);
+                filesLabelText="Files: {uploadFile.toString()}";
+                uploadActionButton.text="Delete"
+                // Later on, process delete action, etc as a list of file objects.
+           }
+
         }
         onKeyPressed: function (ke: KeyEvent) {
             if (ke.code == KeyCode.VK_DOWN) {
@@ -189,7 +236,7 @@ public class StorageEditorView extends AppView {
             } else if (ke.code == KeyCode.VK_UP) {
             } else if (ke.code == KeyCode.VK_ENTER or
                 ke.code == KeyCode.VK_SPACE) {
-                uploadButton.fire();
+                uploadActionButton.fire();
             }
         }      
     }
@@ -226,22 +273,37 @@ public class StorageEditorView extends AppView {
         }
     }
 
+  def CDMIContentCheckbox : CheckBox =
+        CheckBox {
+        selected: bind CDMIObjectFlag with inverse
+    };
+
+    var CDMIContentBox: HBox = HBox {
+       translateX: 5
+       spacing: 3
+       content: [
+            CDMIContentCheckbox,
+            Label {
+                text: "CDMI Content Type"
+                textFill: Color.ALICEBLUE }
+    ]}
 
 
-    var filesVBox: VBox = VBox {
-        content: [ filesLabel ]
+    var filesVBox: HBox = HBox {
+        content: [ filesLabel, uploadActionButton ]
         spacing: 5
         translateX: 8
+        translateY: 10
         layoutInfo: LayoutInfo {
-            height: 30
+            height: 40
         }
     }
 
     var bottomButtonBox: HBox = HBox {
         translateX: 30
-        translateY: 40
-        content: [uploadButton, doneButton , cancelButton]
-        spacing: 4
+        //translateY: 40
+        content: [doneButton , cancelButton]
+        spacing: 5
         layoutInfo: LayoutInfo {
             width: bind screenWidth - 25
             height: 20
@@ -261,13 +323,14 @@ public class StorageEditorView extends AppView {
     protected override function createView(): Void {
         defControl = nameTextBox;
         view = VBox {
-            spacing: 5
+            spacing: 15
             content: [
                 headingBox,
                 nameHBox,
                 timeVBox,
-                bottomButtonBox,
-                filesVBox
+                filesVBox,
+                CDMIContentBox,
+                bottomButtonBox
             ]
         };
     }

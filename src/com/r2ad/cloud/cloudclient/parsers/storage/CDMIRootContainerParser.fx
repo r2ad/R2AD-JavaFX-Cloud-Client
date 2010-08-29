@@ -20,8 +20,8 @@ import javafx.data.pull.PullParser;
 import javafx.io.http.HttpHeader;
 import javafx.io.http.HttpRequest;
 import java.io.InputStream;
-import java.lang.Exception;
 import java.lang.Thread;
+import com.r2ad.cloud.cloudclient.utils.StringUtilities;
 
 
 /*
@@ -31,6 +31,7 @@ import java.lang.Thread;
  * Created on Mar 7, 2010, 10:51:23 PM
  * @author behrens@r2ad.com
 */
+    def strings: StringUtilities = new StringUtilities();
 
     /**
     * Obtain the controller via the singleton - this is temporary code:
@@ -38,13 +39,15 @@ import java.lang.Thread;
     public var controller: Controller = bind controller.controller;
     //var traceLevel = Trace.getLevel("RootCDMIParser");
     var resultsProcessor: function(is: InputStream) : Void;
-    var connection = controller.dataManager.getStorageConnection();
+    var connection;
     var myName = "CDMIRoot";
 
         /**
+         * Not being used...pull parser seems work okay.
          * Timeline that executes the parsing in a background thread, this way,
          * The GUI can continue to function.  Not sure what the effect will be
          * on GUI when updating from this code - we'll see.
+         * Consider javafx.data.pull.ParserTask as well.
          */
         var parserTimeline: Timeline = Timeline {
             repeatCount: 1
@@ -79,7 +82,7 @@ import java.lang.Thread;
     }
 
     function parseResource() : Void {
-
+        connection = controller.dataManager.getStorageConnection();
         println("{myName}: Connecting to: {connection}");
         connection.updateStatus("Connecting to {connection.connection}");
 
@@ -122,7 +125,7 @@ import java.lang.Thread;
                     connection.connected = true;
                     connection.updateStatus("Response Code {code}");
                 } else {
-                    connection.updateStatus("Response Code {code}", true);
+                    connection.updateStatus("Response Code: {code}", true);
                 }
             }
             onResponseMessage: function(msg:String) { println("rootCDMI: responseMessage: {msg}") }
@@ -174,10 +177,13 @@ def parseEventCallback = function(event: Event) {
 
     if (event.type == PullParser.END_ARRAY_ELEMENT) {
         if (event.name == "children" and event.level == 0) {
-            if (event.text.length() > 0) {                
+            if (event.text.length() > 0) {
+                // Remove any trailing slashes.
+                var title: String = strings.trimSlashes(event.text);
+
                 // For now - get the details of this container from the net resource.
                 // This in turn populates the tree.
-                CDMIContainerDetails.getContainerDetails(event.text);
+                CDMIContainerDetails.getContainerDetails(title);
             }
         }
     }

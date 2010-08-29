@@ -48,10 +48,12 @@ public class OCCIStorageType extends OCCILinkType {
     public static String[] StatusString = {"Online", "Offline", "Degraded"};
     private float size;
     private Status status;
+    StoredObject contianedObject;
     /** NOT YET IN THE SPEC ***/
     private Date createTime;
     private Date modifiedTime;
     private Date accessTime;
+
 
     // ***************************
     // Public Class Constructor Methods
@@ -129,7 +131,25 @@ public class OCCIStorageType extends OCCILinkType {
         firePropertyChange(new PropertyChangeEvent(this,
             STATUS, temp, status));
     }
-    
+
+    /*
+     * Adds an object to this storage container.
+     */
+    public void addObject(StoredObject SO) {
+        if (contianedObject == null) {
+            contianedObject = SO;
+        }
+    }
+
+    /*
+     * Returns the objects stored in this cotnainer.  These are typically
+     * files, either textual or binary.
+     */
+    public StoredObject getObject() {
+        return contianedObject;
+    }
+
+
     public String getString() {
          return "ID:"+ this.getID() +", Title:"+ this.getTitle()+", Status:"+ this.getStatus() +", URI:"+ this.getURI();
     }

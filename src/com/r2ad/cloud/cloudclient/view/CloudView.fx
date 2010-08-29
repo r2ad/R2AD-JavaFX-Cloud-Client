@@ -57,7 +57,7 @@ public class CloudView extends AppView {
     var computeText: String = "Compute";
     var storageText: String = "Storage";
     var statusButtonText: String = "Log";
-    var versionNumber: String = "v0.1.9";
+    var versionNumber: String = "v0.2";
     var viewTitleText: String = "R2AD Cloud Client {versionNumber}";
 
     var progress: Number = bind progressVal on replace {

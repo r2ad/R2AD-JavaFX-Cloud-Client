@@ -21,6 +21,8 @@ import com.r2ad.cloud.cloudclient.parsers.storage.CDMICreateContainer;
 import com.r2ad.cloud.cloudclient.parsers.compute.OCCINodeParser;
 import org.occi.model.OCCINetworkType;
 import com.r2ad.cloud.cloudclient.parsers.compute.OCCICreateDisk;
+import com.r2ad.cloud.cloudclient.parsers.storage.CDMICreateObject;
+import java.io.File;
 
 /**
  * @author David K. Moolenaar, R2AD LLC
@@ -89,6 +91,8 @@ public class CloudDataManager {
             storageArray = [];
         }
         storageConnection = conn;
+        //println("CloudConnection: {conn}");
+        
         queryStorageConnection();
     }
 
@@ -227,12 +231,41 @@ public class CloudDataManager {
      * Add a OCCIStorageType into the local array.
      */
     public function addStorageType(sModel: OCCIStorageType):Integer {
-        insert sModel into storageArray;
-        //
-        // Item is in model...so now Network call can be performed.
-        // Info from network call can be used to update or delete model.
-        //
-        CDMICreateContainer.createContainer(sModel);
+       if ( sModel != null) {
+            insert sModel into storageArray;
+            //
+            // Item is in model...so now Network call can be performed.
+            // Info from network call can be used to update or delete model.
+            //
+            CDMICreateContainer.createContainer(sModel);
+       }
+
+        return storageArray.size();
+    }
+
+    /**
+     * Update an OCCIStorageType into the local array.
+     */
+    public function updateStorageType(sModel: OCCIStorageType):Integer {
+       // check to see if it is already there...
+       if ( sModel != null) {
+            println("Update action: {sModel.getTitle()}....");
+            var storedObject = sModel.getObject();
+            // Update file if specified:
+            if (storedObject != null ) {
+                println("FILE UPLOAD in Progress to {storedObject.getFile()}....");
+                if ( storedObject.getUploadFlag() == true ) {
+                    var uploadFile: File = storedObject.getFile();
+                    println ("Now need to upload file {uploadFile.toString()}");
+                    CDMICreateObject.createObject(sModel);
+                } else {
+                    println("No file to upload.");
+                }
+            } else {
+                println("No file to  Upload this time.");
+            }
+
+       }
         return storageArray.size();
     }
 
