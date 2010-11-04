@@ -32,9 +32,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.paint.Color;
 
 /**
- * Allows the user to modify the VM details such as its name,
- * core Count, Memory, notes, etc.
- * Also allows to delete the task.
+ * StorageEditorView
+ * Allows the user to modify the storage details such as its name,
+ * Also allows file objects to be uploaded to the container.
  */
 public class StorageEditorView extends AppView {
 
@@ -225,7 +225,7 @@ public class StorageEditorView extends AppView {
                 storedObject.setCDMIContentType(CDMIObjectFlag);
                 storageType.addObject(storedObject);
                 filesLabelText="Files: {uploadFile.toString()}";
-                uploadActionButton.text="Delete"
+                //uploadActionButton.text="Delete"
                 // Later on, process delete action, etc as a list of file objects.
            }
 

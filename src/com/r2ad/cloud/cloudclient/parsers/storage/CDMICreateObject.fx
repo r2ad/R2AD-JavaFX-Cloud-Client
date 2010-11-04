@@ -42,10 +42,11 @@ import java.io.FileReader;
     public var controller: Controller = bind controller.controller;
     var myName = "CDMICreateObject";
     var content: StringBuilder = new StringBuilder();
+    var contentLength  = 0;
 
-    // Information about all relevant cloud nodes
-    //public var cloudNodes: NodeModel[];
-
+    /*
+     * Called to upload or create the object on the connected CDMI node.
+     */
     public function createObject(sModel: OCCIStorageType) : Void {
 
         var storedObject: StoredObject = sModel.getObject();
@@ -57,7 +58,6 @@ import java.io.FileReader;
             println ("WARNING - Create Object called and flag is FALSE");
         }
 
-
         var resultsProcessor: function(is: InputStream) : Void;
         var connection = controller.dataManager.getStorageConnection();
         println("{myName} Connecting to: {connection}");
@@ -67,11 +67,19 @@ import java.io.FileReader;
         var versionHeader: HttpHeader;
 
         if (storedObject.isCDMIContentType()) {
+
+            // HoLD Lab content lines should be below:
+            // Insert here StringBuilder append lines as needed to
+            // comply with CDMI spec for an object PUT.
+            // i.e. content.append("\{\n");
+            // etc.
+
             content.append("\{\n");
             content.append("\t\"mimetype\" : \"text/plain\",\n");
             content.append("\t\"metadata\" : \{\n");
             content.append("\n\t\},\n");
             content.append("\t\"value\" : \"");
+
             // Read the file and inject as a CDMI text:
             var text: StringBuilder  = new StringBuilder();
             //use buffering, reading one line at a time
@@ -80,23 +88,29 @@ import java.io.FileReader;
             try {
               var line: String = null; //not declared within while loop
               while (( line = input.readLine()) != null){
+                 println("{myName}: object content: {line}");
+                 // HoLD Lab TODO:  Also append each line from the file:
+
                  content.append("{line}");
               }
             }
             finally{
                input.close();
             }
+            //
+            // HoLD Lab TODO:  Do not foget the closing syntax:
+            //
+
             content.append("\"\n");
             content.append("\}\n");
 
         var contentBytes : Byte[] = content.toString().getBytes();
-        var contentLength  = contentBytes.size();
+        contentLength  = contentBytes.size();
 
         var contentLengthHeader = HttpHeader {
                name: HttpHeader.CONTENT_LENGTH,
                value:"{contentLength}"
             };
-
         acceptHeader = HttpHeader {
                name: HttpHeader.ACCEPT,
                value:"application/vnd.org.snia.cdmi.dataobject+json"
@@ -199,7 +213,12 @@ import java.io.FileReader;
 
             }
         }
-       request.start();
+        if (contentLength > 0) {
+            println("{myName}: Initiating object PUT request, len=: {contentLength}");
+            request.start();
+        } else {
+            println("{myName}: Object Request Aborted...zero content size!");
+        }
 
     }
 

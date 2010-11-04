@@ -47,7 +47,7 @@ import org.occi.model.OCCIComputeType;
     public function getAuthToken() : Void {
         connection = controller.dataManager.getComputeConnection();
         domainURI = new URI("{connection.connection}");
-        connection.updateStatus("Getting OCCI resource...domainURI: {domainURI}");
+        connection.updateStatus("Getting Rackspace resource...domainURI: {domainURI}");
 
         println("{myName}: getDetails from rackspace to: {connection}");
         var authenticationHeader = HttpHeader.basicAuth(connection.user, connection.credentials);
@@ -65,7 +65,6 @@ import org.occi.model.OCCIComputeType;
                name: "X-Auth-Key";
                value:"{connection.credentials}"
                //https://auth.api.rackspacecloud.com/v1.0
-               //d5bce70010d9ae199ab51ff25b255f43
             };
         var request : HttpRequest = HttpRequest {
            // TBD: Actually, need to get the path to the resource
@@ -114,8 +113,7 @@ import org.occi.model.OCCIComputeType;
 
             onToRead: function(bytes: Long) {
                println("bytes to read: {bytes}");
-               connection.updateStatus("Reading {bytes} OCCI bytes");
-
+               connection.updateStatus("Reading {bytes} rackspace bytes");
              }
 
             // The onRead callback is called when some more data has been read into
@@ -134,7 +132,7 @@ import org.occi.model.OCCIComputeType;
                 } finally {
                     is.close();
                     println("{myName}: Finished Parsing");
-                    connection.updateStatus("Finisihed parsing OCCI Node");
+                    connection.updateStatus("Finisihed parsing rackspace Node");
                 }
             }
         }
@@ -156,8 +154,6 @@ def parseEventCallback = function(event: Event) {
     }
 }
 
-// temporary variables needed during processing
-//var result: NodeModel;
 
 function processStartEvent(event: Event) {
     if (event.qname.name == "Result" and event.level == 1) {

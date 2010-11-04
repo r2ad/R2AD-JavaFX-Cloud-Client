@@ -1,6 +1,6 @@
 This is the R2AD Client Client community edition open souce repository.
-Version 0.1
-July 2010 after OGF-29
+Version 0.2
+Sept 2010 for the SDC 2010 conference
 Visit http://cloud.r2ad.net for more informaiton.
 
 The JavaFX and related code is intendend to be used within the NetBeans IDE.
