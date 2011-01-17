@@ -22,7 +22,7 @@ import org.occi.model.OCCINetworkType;
 import com.r2ad.cloud.cloudclient.parsers.compute.OCCICreateDisk;
 import com.r2ad.cloud.cloudclient.parsers.storage.CDMICreateObject;
 import java.io.File;
-import com.r2ad.cloud.cloudclient.parsers.compute.RackSpaceParser;
+import com.r2ad.cloud.cloudclient.parsers.compute.OCCINodeParser;
 
 /**
  * @author David K. Moolenaar, R2AD LLC
@@ -100,7 +100,7 @@ public class CloudDataManager {
         if (computeConnection != null) {
             //println("queryComputeConnection....");
             OCCINodeParser.getComputeNode("");
-            // Uncomment below to test for external real rackspace account:
+            // Uncomment below to test for external rackspace account:
             //RackSpaceParser.getAuthToken();
         }
     }

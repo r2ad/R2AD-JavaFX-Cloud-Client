@@ -139,7 +139,7 @@ import org.occi.model.StoredObject;
                        output.write(content.toString().getBytes());
                        output.close();
                     } catch (e: java.io.IOException) {
-                       println("CreateContainer: Unable to write");
+                       println("{myName}: Unable to write JSON content");
                     }
                 }
             }
@@ -188,8 +188,6 @@ def parseEventCallback = function(event: Event) {
         println("TBD: {myName}: Store ObjectURI..............");
         //sModel.setObjectURI(event.text);
     }
-
-
 
     if (event.type == PullParser.END_ARRAY_ELEMENT) {
         if (event.name == "children" and event.level == 0) {

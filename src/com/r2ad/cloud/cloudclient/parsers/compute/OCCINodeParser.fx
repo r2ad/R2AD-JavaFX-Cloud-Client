@@ -23,8 +23,6 @@ import org.occi.model.OCCIComputeType;
 import com.sun.javafx.io.http.impl.Base64;
 import com.r2ad.cloud.cloudclient.utils.Encoder;
 
-//import cloudclient.model.NodeModel;
-
 /**
  * This is the OCCI Node Parser which implements a portion of the OCCI specification.
  * This version uses the PullParser API to parse results in XML.
@@ -46,11 +44,9 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
     var computeNode : String;
 
 
-
     // Information about all relevant cloud nodes
     //public var cloudNodes: NodeModel[];
     //   GetMethod httpget = new GetMethod("https://www.verisign.com/");
-
     public function getComputeNode(stringID: String) : Void {
         connection = controller.dataManager.getComputeConnection();
         domainURI = new URI("{connection.connection}");

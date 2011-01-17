@@ -237,7 +237,6 @@ public class ComputeEditorView extends AppView {
    //
    // UI Containers for the Controls and Labels
    //
-
     var headingBox = HBox {
         translateX: 45
         translateY: 5
