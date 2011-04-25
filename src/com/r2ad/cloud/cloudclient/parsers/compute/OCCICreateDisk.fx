@@ -43,8 +43,10 @@ import com.sun.javafx.io.http.impl.Base64;
     //public var cloudNodes: NodeModel[];
 
     public function createDisk(newModel: OCCINetworkType) : Void {
-        println("++createDisk: {newModel}");
-        println("++createDisk: {newModel.getTitle()}");
+        println("++createDisk : {newModel}");
+        println("++createDisk++++++++++++++++++++++++");
+        println("++createDisk++++++++++++++++++++++++: {newModel.getTitle()}");
+        println("++createDisk++++++++++++++++++++++++");
 
         content.append("<DISK>\n");
         content.append("<NAME>{newModel.getTitle()}-Disk</NAME>\n");

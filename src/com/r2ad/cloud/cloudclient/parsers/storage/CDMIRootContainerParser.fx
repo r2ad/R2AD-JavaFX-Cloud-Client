@@ -102,37 +102,37 @@ import com.r2ad.cloud.cloudclient.utils.StringUtilities;
                 println("{myName}: responseCode: {code}");
                 /*
                 if (code == 405) {
-                    println("DeleteContainer: Not Allowed!  Return FAIL");
-                    connection.updateStatus("Code 405 - not allowed", true);
+                    println("{myName}: Not Allowed!  Return FAIL");
+                    connection.updateStatus("{myName}: Code 405 - not allowed", true);
                 }
                 if (code == 400) {
-                    println("DeleteContainer: Bad Request!  Return FAIL");
-                    connection.updateStatus("Code 400 - Bad Request", true);
+                    println("{myName}: Bad Request!  Return FAIL");
+                    connection.updateStatus("{myName}: Code 400 - Bad Request", true);
                 }
                 if (code == 500) {
-                    println("DeleteContainer: Internal error  Return FAIL");
-                    connection.updateStatus("Code 500 - Internal Error", true);
+                    println("{myName}: Internal error  Return FAIL");
+                    connection.updateStatus("{myName}: Code 500 - Internal Error", true);
                 }
                 if (code == 401) {
-                    println("OCCINodeParser: Login Failure (401)");
-                    connection.updateStatus("Login Failure. Try Again", true);
+                    println("{myName}: Login Failure (401)");
+                    connection.updateStatus("{myName}: Login Failure. Try Again", true);
                 } else {
-                    //connection.updateStatus("Good {code} Response");
+                    //connection.updateStatus("{myName}: Good {code} Response");
                     connection.connected = true;
                 }
                 */
                 if (code == 200) {
                     connection.connected = true;
-                    connection.updateStatus("Response Code {code}");
+                    connection.updateStatus("{myName}: Response Code {code}");
                 } else {
-                    connection.updateStatus("Response Code: {code}", true);
+                    connection.updateStatus("{myName}: Response Code: {code}", true);
                 }
             }
-            onResponseMessage: function(msg:String) { println("rootCDMI: responseMessage: {msg}") }
-            onReadingHeaders: function() { println("rootCDMI: readingHeaders...") }
+            onResponseMessage: function(msg:String) { println("{myName}: responseMessage: {msg}") }
+            onReadingHeaders: function() { println("{myName}: readingHeaders...") }
             onToRead: function(bytes: Long) {
-               println("rootCDMI: bytes to read: {bytes}");
-               connection.updateStatus("Reading {bytes} CDMI bytes");
+               println("{myName}: bytes to read: {bytes}");
+               connection.updateStatus("{myName}: Reading {bytes} CDMI bytes");
             }
 
             // The onRead callback is called when some more data has been read into
@@ -150,7 +150,7 @@ import com.r2ad.cloud.cloudclient.utils.StringUtilities;
                     println("{myName}: bytes of content available: {is.available()}");
                 } finally {
                     is.close();
-                    connection.updateStatus("Parsing CDMI Node Completed");
+                    connection.updateStatus("{myName}: Parsing CDMI Node Completed");
                     //controller.showStorageList();
                 }
             }

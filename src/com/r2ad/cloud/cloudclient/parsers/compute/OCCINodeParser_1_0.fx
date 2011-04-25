@@ -13,8 +13,6 @@
 package com.r2ad.cloud.cloudclient.parsers.compute;
 
 import java.io.InputStream;
-import javafx.data.pull.Event;
-import javafx.data.pull.PullParser;
 import javafx.io.http.HttpHeader;
 import javafx.io.http.HttpRequest;
 import com.r2ad.cloud.cloudclient.controller.Controller;
@@ -22,6 +20,9 @@ import java.net.URI;
 import org.occi.model.OCCIComputeType;
 import com.sun.javafx.io.http.impl.Base64;
 import com.r2ad.cloud.cloudclient.utils.Encoder;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.InputStreamReader;
 
 /**
  * This is the OCCI Node Parser which implements a portion of the OCCI specification.
@@ -32,7 +33,7 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
     * Obtain the controller via the singleton - this is temporary code:
     */
     public var controller: Controller = bind controller.controller;
-    var myName = "OCCINodeParser";
+    var myName = "OCCINodeParser_1_0";
 
     var objectURI : URI;
     var domainURI : URI;
@@ -49,6 +50,10 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
     //   GetMethod httpget = new GetMethod("https://www.verisign.com/");
     public function getComputeNode(stringID: String) : Void {
         connection = controller.dataManager.getComputeConnection();
+        if ( not connection.connection.endsWith("/") ) {
+            connection.setConnection("{connection.connection}/");
+        }
+        
         domainURI = new URI("{connection.connection}");
         connection.updateStatus("Getting OCCI resource: {domainURI}");
 
@@ -63,11 +68,11 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
                value:"Basic {credentials64}"
             };
         var authenticationHeader;
-        if ( controller.loginView.alternate == false ) {
-            // This is now the default
+        if ( controller.loginView.alternate == true ) {
             authenticationHeader=rubyAuthHeader;
             println("{myName}: using rubyAuthHeader");
         } else {
+            // This is now the default
             authenticationHeader=normalAuthenticationHeader;
             println("{myName}: using normalAuthenticationHeader");
         }
@@ -78,15 +83,15 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
             };
         var agentHeader = HttpHeader {
                name: "User-Agent",
-               value:"R2ADCloud"
+               value:"occi-client/1.0"
             };
         var versionHeader = HttpHeader {
                name: "OCCI-Version",
-               value:"0.1"
+               value:"1.0"
             };
         var contentHeader = HttpHeader {
                name: HttpHeader.CONTENT_TYPE;
-               value:"application/occi"
+               value:"text/occi"
             };
         var langHeader = HttpHeader {
                name: "Accept-Language";
@@ -99,20 +104,19 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
 
         var request : HttpRequest = HttpRequest {
            // TBD: Actually, need to get the path to the resource
-           // For OCCI/CMDI Demo, need to add a /compute.
-           // Would much rather inspect the response and follow links based on
-           // RDFa.
-            location: "{domainURI}/compute";
 
-            headers: [contentHeader, acceptHeader, agentHeader, versionHeader, authenticationHeader]
+            location: "{domainURI}";  //may need to add: /compute
+
+            headers: [agentHeader, contentHeader, acceptHeader, authenticationHeader]
             method: HttpRequest.GET
 
             onStarted: function() {
                println("{myName}: onStarted - started performing method");
+               println("{myName}: Headers: {agentHeader} {contentHeader} {acceptHeader}");
             }
             onConnecting: function() { println("{myName}: connecting to {request.location}") }
             onDoneConnect: function() { println("{myName}: doneConnect") }
-           // onReadingHeaders: function() { println("readingHeaders...") }
+            onReadingHeaders: function() { println("{myName}: readingHeaders...") }
             onResponseCode: function(code:Integer) {
                 println("{myName}: OCCNode responseCode: {code}");
                 //controller.dataManager.removeStorageType(stringID);
@@ -147,7 +151,6 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
                 }
             }
 
-
             onResponseMessage: function(msg:String) {
                 println("{myName}: responseMessage: {msg}");
                 connection.updateStatus("Response: {msg}", true);
@@ -155,8 +158,7 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
             onToRead: function(bytes: Long) {
                println("{myName}: bytes to read: {bytes}");
                connection.updateStatus("{myName}: Reading {bytes} OCCI bytes");
-
-             }
+            }
 
             // The onRead callback is called when some more data has been read into
             // the input stream's buffer.  The input stream will not be available until
@@ -172,7 +174,7 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
             }
 
             onInput: function(is: InputStream) {
-                resultsProcessor = processResults;
+                resultsProcessor = processHTMLResults;
                 resultsProcessor(is);
                 try {
                     println("{myName}: bytes of content available: {is.available()}");
@@ -187,53 +189,52 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
     }
 
 
-public function processResults(is: InputStream) : Void {
+public function processHTMLResults(is: InputStream) : Void {
     println("{myName}: Processing Results: Parsing on InputStream ---------- ");
+    var htmlPage: String = "";
 
-    def parser = PullParser { documentType: PullParser.XML; input: is; onEvent: parseEventCallback };
     try {
-        parser.parse();
+       println("{myName}: bytes of content available: {is.available()}");
+       parseInput(is);
+       //var s2s: StreamToString = new StreamToString();
+       //htmlPage = s2s.convertStreamToString(is);
+       //println("{myName}: Returned Page: {htmlPage}" );
+
     } catch (e: java.io.IOException) {
-       println("{myName}:: Parsing Exception.");
+       println("{myName}: Parsing Exception.");
        e.printStackTrace();
     }
 
-    is.close();
-}
-
-def parseEventCallback = function(event: Event) {
-    if (event.type == PullParser.START_ELEMENT) {
-        processStartEvent(event)
-    } else if (event.type == PullParser.END_ELEMENT) {
-        processEndEvent(event)
+    try {
+       is.close();
+    } catch (e: java.io.IOException) {
+       e.printStackTrace();
     }
 }
 
-// temporary variables needed during processing
-//var result: NodeModel;
+function parseInput(is: InputStream) {
+    var dis: DataInputStream = new DataInputStream(is);
+    var isr: InputStreamReader = new InputStreamReader(dis);
+    var br: BufferedReader = new BufferedReader(isr);
+    var strLine: String = "";
+    //Read File Line By Line
+    while ((strLine = br.readLine()) != null)   {
+      // Print the content on the console
+      println("{myName}: Line: {strLine}" );
+      if (strLine.startsWith(connection.connection)) {
 
-function processStartEvent(event: Event) {
-    for (qname in event.getAttributeNames()) {
-        var value = event.getAttributeValue(qname);
-        println("{myName} start: {qname} value: {value}");
-        // Store the value in this collection
+         var resourceID : String="UNKNOWN";
+
+         var IDStart;
+         IDStart=strLine.lastIndexOf("/");
+         if ( IDStart >= 0 ) {
+             resourceID=strLine.substring(IDStart+1);
+         }
+
+          println("{myName}: Found RESOURCE: {strLine}");
+          OCCIComputeParser_1_0.getComputeDetails(strLine, resourceID);
+      }
+
     }
-    if (event.qname.name.toLowerCase() == "compute") {
-        computeNode = event.getAttributeValue("href");
-
-        println("{myName}: Detected compute: {computeNode}");
-        //
-        // Automatically Drill Down and get the compute details:
-        //
-        OCCIComputeParser.getComputeDetails(computeNode);
-    }
-
-}
-
-function processEndEvent(event: Event) {
-    //START_VALUE=25, START_ELEMENT=1, START_DOCUMENT=7, START_ARRAY=16
-    //START_ARRAY_ELEMENT=17, END_ARRAY_ELEMENT=18, END_ELEMENT=2
-    println("{myName}:  end event.level={event.level} event.qname.name: {event.qname.name} event.type: {event.type} event.name: {event.name} event.text={event.text}");
-
 
 }

@@ -203,7 +203,7 @@ function processEndEvent(event: Event) {
         println("{myName}: Detected Collection: {event.text}");
         for (qname in event.getAttributeNames()) {
             var value = event.getAttributeValue(qname);
-            println("OCCINodeParser/1: collection {qname} value: {value} Level 1");
+            println("{myName}: collection {qname} value: {value} Level 1");
             // Store the value in this collection
         }
     } else if (event.qname.name == "collection" and event.level == 2) {

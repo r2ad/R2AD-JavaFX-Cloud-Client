@@ -1,6 +1,6 @@
 /**
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
- Copyright (c) 2010, R2AD, LLC
+ Copyright (c) 2011, R2AD, LLC
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -23,6 +23,7 @@ package com.r2ad.cloud.cloudclient.model;
 public class CloudConnection {
 
     public var connection : String = "Click Edit to Login...";
+    public var OCCIversion: String = "1.0";
     public var user: String;
     public var credentials: String;
     public var connected: Boolean = false;
@@ -76,5 +77,9 @@ public class CloudConnection {
     public function getAlternate() : Boolean {
         return alternate;
     }
-    
+
+    public function setConnection(conn: String) {
+        connection=conn;
+    }
+
 }
