@@ -66,7 +66,7 @@ import com.r2ad.cloud.cloudclient.utils.Encoder;
         if ( controller.loginView.alternate == false ) {
             // This is now the default
             authenticationHeader=rubyAuthHeader;
-            println("{myName}: using rubyAuthHeader");
+            println("{myName}: using basic rubyAuthHeader");
         } else {
             authenticationHeader=normalAuthenticationHeader;
             println("{myName}: using normalAuthenticationHeader");

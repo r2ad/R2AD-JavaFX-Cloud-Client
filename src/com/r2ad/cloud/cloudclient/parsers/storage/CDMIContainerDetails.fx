@@ -99,7 +99,9 @@ public function getContainerDetails(relativeURL: String) : Void {
             }
         }
         onResponseMessage: function(msg:String) { println("responseMessage: {msg}") }
-        onToRead: function(bytes: Long) { println("bytes to read: {bytes}") }
+        onToRead: function(bytes: Long) { 
+          // println("bytes to read: {bytes}")
+        }
 
         // The onRead callback is called when some more data has been read into
         // the input stream's buffer.  The input stream will not be available until

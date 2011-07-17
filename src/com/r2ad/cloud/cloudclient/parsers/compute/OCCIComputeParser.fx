@@ -71,7 +71,7 @@ public function getComputeDetails(stringURL: String) : Void {
     if ( controller.loginView.alternate == false ) {
         // This is now the default
         authenticationHeader=rubyAuthHeader;
-        println("{myName}: using rubyAuthHeader");
+        println("{myName}: using basic rubyAuthHeader");
     } else {
         authenticationHeader=normalAuthenticationHeader;
         println("{myName}: using normalAuthenticationHeader");

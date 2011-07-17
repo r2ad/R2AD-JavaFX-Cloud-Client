@@ -22,6 +22,8 @@ import javafx.io.http.HttpRequest;
 import java.io.InputStream;
 import java.lang.Thread;
 import com.r2ad.cloud.cloudclient.utils.StringUtilities;
+import java.net.URI;
+import org.occi.model.OCCIStorageType;
 
 
 /*
@@ -183,7 +185,21 @@ def parseEventCallback = function(event: Event) {
 
                 // For now - get the details of this container from the net resource.
                 // This in turn populates the tree.
-                CDMIContainerDetails.getContainerDetails(title);
+                println("{myName} Getting Child details for: {title}");
+                //
+                // Create shell holders for children.  Added this here because
+                // the get child code currently does not distinquish between files and
+                // containers.
+                // Perhaps this code should query only for containers.
+                //
+                var result: OCCIStorageType;
+                result = OCCIStorageType{};
+                result.setTitle(title);
+                controller.dataManager.insertStorageType(result);
+                println("{myName}: OCCI Storage Type inserted into Model: {result.getString()}");
+                controller.cloudView.loadStorageList();
+                // Skip Child Parse for now:
+                // CDMIContainerDetails.getContainerDetails(title);
             }
         }
     }
