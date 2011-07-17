@@ -48,14 +48,16 @@ public class OCCIComputeType extends OCCILinkType {
     public static final String STATUS = "Status";
     public static final String ARCHITECTURE = "Architecture";
     public static final String CORES = "Cores";
+    public static final String CATEGORY = "Category";
 
     /** Defined by the OCCI v2.0 Schema */
     public static enum Status {ACTIVE, INACTIVE, SUSPENDED}
     public static String[] StatusString = {"Active", "Inactive", "Suspended"};
-    public static enum Architecture {x86, x64}
-    public static String[] ArchString = {"X86", "X64"};
+    public static enum Architecture {x86, x86_32, x86_64}
+    public static String[] ArchString = {"X86", "x86_32", "x86_64"};
 
     private String hostname;    //REQUIRED
+    private String category;    //REQUIRED
     private float memory;       //REQUIRED
     private float speed;        //REQUIRED
     private Status status;      //REQUIRED
@@ -68,6 +70,10 @@ public class OCCIComputeType extends OCCILinkType {
 
     public OCCIComputeType() {
         super();
+    }
+
+    public OCCIComputeType(String id) {
+        super(id, null, "", "", "");
     }
 
     public OCCIComputeType(String id, String hostname, float memory,
@@ -93,13 +99,19 @@ public class OCCIComputeType extends OCCILinkType {
     public int getArchitectureAsInt() {
         int result = 0;
         switch (architecture) {
-            case x64: result = 1;
+            case x86: result = 0;
+            case x86_32: result = 1;
+            case x86_64: result = 2;
         }
         return result;
     }
 
     public float getCores() {
         return cores;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public String getHostname() {
@@ -120,12 +132,21 @@ public class OCCIComputeType extends OCCILinkType {
 
     public int getStatusAsInt() {
         int result = 0;
-        switch (status) {
-            case INACTIVE: result = 1;
-                           break;
-            case SUSPENDED: result = 2;
-                            break;
+
+        try {
+            result=1;
+            switch (status) {
+                case INACTIVE: result = 1;
+                               break;
+                case SUSPENDED: result = 2;
+                                break;
+            }
+        } catch (Exception e) {
+            result=0;
         }
+
+
+
         return result;
     }
 
@@ -133,7 +154,9 @@ public class OCCIComputeType extends OCCILinkType {
         if (arch == 0) {
             setArchitecture(Architecture.x86);
         } else if (arch == 1) {
-            setArchitecture(Architecture.x64);
+            setArchitecture(Architecture.x86_32);
+        } else if (arch == 2) {
+            setArchitecture(Architecture.x86_64);
         }
     }
 
@@ -151,25 +174,29 @@ public class OCCIComputeType extends OCCILinkType {
             CORES, Float.valueOf(temp), Float.valueOf(cores)));
     }
 
+
+    public void setCategory(String cat) {
+        this.category = cat;
+        firePropertyChange(new PropertyChangeEvent(this,
+            CATEGORY, this.category, cat));
+    }
+
     public void setHostname(String hostname) {
-        String temp = this.hostname;
         this.hostname = hostname;
         firePropertyChange(new PropertyChangeEvent(this,
-            HOSTNAME, temp, hostname));
+            HOSTNAME, hostname, this.hostname));
     }
 
     public void setMemory(float memory) {
-        float temp = this.memory;
         this.memory = memory;
         firePropertyChange(new PropertyChangeEvent(this,
-            MEMORY, Float.valueOf(temp), Float.valueOf(memory)));
+            MEMORY, Float.valueOf(this.memory), Float.valueOf(memory)));
     }
 
     public void setSpeed(float speed) {
-        float temp = this.speed;
         this.speed = speed;
         firePropertyChange(new PropertyChangeEvent(this,
-            SPEED, Float.valueOf(temp), Float.valueOf(speed)));
+            SPEED, Float.valueOf(this.speed), Float.valueOf(speed)));
     }
 
     public void setStatus(int status) {
@@ -183,10 +210,9 @@ public class OCCIComputeType extends OCCILinkType {
     }
 
     public void setStatus(Status status) {
-        Status temp = this.status;
         this.status = status;
         firePropertyChange(new PropertyChangeEvent(this,
-            STATUS, temp, status));
+            STATUS, this.status, status));
     }
 
     public String getString() {
