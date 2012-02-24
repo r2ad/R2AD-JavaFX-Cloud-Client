@@ -88,9 +88,8 @@ import java.io.FileReader;
             try {
               var line: String = null; //not declared within while loop
               while (( line = input.readLine()) != null){
-                 println("{myName}: object content: {line}");
+                 println("{myName}: object read in line: {line}");
                  // HoLD Lab TODO:  Also append each line from the file:
-
                  content.append("{line}");
               }
             }
@@ -100,7 +99,6 @@ import java.io.FileReader;
             //
             // HoLD Lab TODO:  Do not foget the closing syntax:
             //
-
             content.append("\"\n");
             content.append("\}\n");
 
@@ -113,11 +111,11 @@ import java.io.FileReader;
             };
         acceptHeader = HttpHeader {
                name: HttpHeader.ACCEPT,
-               value:"application/vnd.org.snia.cdmi.dataobject+json"
+               value:"application/cdmi-object" //application/vnd.org.snia.cdmi.dataobject+json"
             };
         contentHeader = HttpHeader {
                name: HttpHeader.CONTENT_TYPE;
-               value:"application/vnd.org.snia.cdmi.dataobject+json"
+               value:"application/cdmi-object" //application/vnd.org.snia.cdmi.dataobject+json"
             };
         versionHeader = HttpHeader {
                name: "X-CDMI-Specification-Version";
@@ -188,9 +186,8 @@ import java.io.FileReader;
 
             override var output on replace {
                println("{myName}: output on replace: Writing...");
-               println("{myName}: Debug Content -----------------------------");
+               println("{myName}: Debug Content:");
                println("{content}");
-               println("{myName}: -------------------------------------------");
 
                 if (output != null) {
                     try {

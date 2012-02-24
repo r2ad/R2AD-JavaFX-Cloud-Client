@@ -62,20 +62,25 @@ public function getContainerDetails(relativeURL: String) : Void {
 
     var acceptHeader = HttpHeader {
            name: HttpHeader.ACCEPT,
-           value:"application/vnd.org.snia.cdmi.container+json"
+           value:"application/cdmi-container"
         };
     var contentHeader = HttpHeader {
            name: HttpHeader.CONTENT_TYPE;
-           value:"application/vnd.org.snia.cdmi.container+json"
+           value:"application/cdmi-container" //"application/vnd.org.snia.cdmi.container+json"
+        };
+    var versionHeader = HttpHeader {
+           name: "X-CDMI-Specification-Version";
+           value:"1.0"
         };
     var request : HttpRequest = HttpRequest {
        // TBD: Actually, need to get the path to the resource
         location: "{connection.connection}/{relativeURL}";
-        headers: [contentHeader, acceptHeader]
+        // Took out version to support Ilja's server'
+        headers: [contentHeader, acceptHeader] //, versionHeader
         method: HttpRequest.GET
 
         onStarted: function() {
-           println("{myName}: onStarted - started performing method");
+           println("{myName}: onStarted location: {request.location}");
         }
         onConnecting: function() { println("{myName}:Connecting to {request.location}") }
         onDoneConnect: function() { println("{myName}:doneConnect") }

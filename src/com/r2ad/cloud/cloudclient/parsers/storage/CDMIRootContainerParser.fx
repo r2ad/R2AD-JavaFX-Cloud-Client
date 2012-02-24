@@ -22,7 +22,6 @@ import javafx.io.http.HttpRequest;
 import java.io.InputStream;
 import java.lang.Thread;
 import com.r2ad.cloud.cloudclient.utils.StringUtilities;
-import java.net.URI;
 import org.occi.model.OCCIStorageType;
 
 
@@ -90,24 +89,34 @@ import org.occi.model.OCCIStorageType;
 
         var acceptHeader = HttpHeader {
                name: HttpHeader.ACCEPT,
-               value:"application/vnd.org.snia.cdmi.container+json"
+               value:"application/cdmi-container"
             };
+
+        var versionHeader = HttpHeader {
+               name: "X-CDMI-Specification-Version";
+               value:"1.0"
+            };
+
         var contentHeader = HttpHeader {
                name: HttpHeader.CONTENT_TYPE;
-               value:"application/vnd.org.snia.cdmi.container+json"
+               value:"application/cdmi-container" //application/vnd.org.snia.cdmi.container+json"
             };
         var request : HttpRequest = HttpRequest {
             location: connection.connection;
-            headers: [contentHeader, acceptHeader]
+            headers: [contentHeader, acceptHeader] //, versionHeader
             method: HttpRequest.GET
             onResponseCode: function(code:Integer) { 
+                println("{myName}: location: {connection.connection}");
                 println("{myName}: responseCode: {code}");
-                /*
                 if (code == 405) {
                     println("{myName}: Not Allowed!  Return FAIL");
                     connection.updateStatus("{myName}: Code 405 - not allowed", true);
                 }
                 if (code == 400) {
+                    println("{myName}: Bad Request!  Return FAIL");
+                    connection.updateStatus("{myName}: Code 404 - Not Found", true);
+                }
+                if (code == 404) {
                     println("{myName}: Bad Request!  Return FAIL");
                     connection.updateStatus("{myName}: Code 400 - Bad Request", true);
                 }
@@ -122,7 +131,6 @@ import org.occi.model.OCCIStorageType;
                     //connection.updateStatus("{myName}: Good {code} Response");
                     connection.connected = true;
                 }
-                */
                 if (code == 200) {
                     connection.connected = true;
                     connection.updateStatus("{myName}: Response Code {code}");
@@ -130,7 +138,11 @@ import org.occi.model.OCCIStorageType;
                     connection.updateStatus("{myName}: Response Code: {code}", true);
                 }
             }
-            onResponseMessage: function(msg:String) { println("{myName}: responseMessage: {msg}") }
+            onResponseMessage: function(msg:String) {
+                println("{myName}: responseMessage: {msg}");
+                connection.updateStatus("{myName}: {msg}", false);
+
+            }
             onReadingHeaders: function() { println("{myName}: readingHeaders...") }
             onToRead: function(bytes: Long) {
                println("{myName}: bytes to read: {bytes}");

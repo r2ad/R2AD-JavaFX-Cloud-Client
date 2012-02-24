@@ -49,9 +49,9 @@ public class StorageEditorView extends AppView {
     var accessTimeText: String = "Access Time:";
     var createTimeText: String = "Create Time:";
     var modifiedTimeText: String = "Modified Time:";
-    var filesLabelText: String = "File(s):";
+    var filesLabelText: String = "Text File(s): ";
     var notAvailableText: String = "N/A";
-    var CDMIObjectFlag: Boolean;
+    var CDMIObjectFlag: Boolean = true;
 
     //var updateMode: Boolean;
 
@@ -76,7 +76,6 @@ public class StorageEditorView extends AppView {
             nameTextBox.text = defaultNameBoxText;
             nameTextBox.commit();
         }
-        filesLabelText="File(s):";
         var storedObject: StoredObject = storageType.getObject();
         storedObject.setUploadFlag(false);
         var uploadFile: File = storedObject.getFile();
@@ -104,12 +103,6 @@ public class StorageEditorView extends AppView {
     var modifiedTimeLabel: Label = Label {
         text: bind "{modifiedTimeText} {if (storageType.getModifiedTime()==null)
             {notAvailableText} else timeFormat.format(storageType.getModifiedTime())}"
-        textFill: defaultTextColor
-        font: smallerTextFont
-    }
-
-    var filesLabel: Label = Label {
-        text: bind filesLabelText;
         textFill: defaultTextColor
         font: smallerTextFont
     }
@@ -247,7 +240,6 @@ public class StorageEditorView extends AppView {
 
     var headingBox = HBox {
         translateX: 50
-        translateY: 5
         content: [headingLabel]
         layoutInfo: LayoutInfo {
             width: bind screenWidth - 20
@@ -289,11 +281,16 @@ public class StorageEditorView extends AppView {
     ]}
 
 
-    var filesVBox: HBox = HBox {
-        content: [ filesLabel, uploadActionButton ]
-        spacing: 5
-        translateX: 8
-        translateY: 10
+    var filesVBox: VBox = VBox {
+        translateX: 5
+        translateY: 16
+        content: [
+            uploadActionButton,
+            Label {
+                text: bind filesLabelText
+                textFill: Color.ALICEBLUE
+                }
+        ]
         layoutInfo: LayoutInfo {
             height: 40
         }
@@ -323,7 +320,7 @@ public class StorageEditorView extends AppView {
     protected override function createView(): Void {
         defControl = nameTextBox;
         view = VBox {
-            spacing: 15
+            spacing: 16
             content: [
                 headingBox,
                 nameHBox,

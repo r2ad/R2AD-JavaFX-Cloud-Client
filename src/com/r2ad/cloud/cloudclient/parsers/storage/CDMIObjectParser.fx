@@ -45,11 +45,11 @@ import javafx.io.http.HttpRequest;
 
         var acceptHeader = HttpHeader {
                name: HttpHeader.ACCEPT,
-               value:"application/vnd.org.snia.cdmi.dataobject+json"
+               value:"application/cdmi-object"
             };
         var contentHeader = HttpHeader {
                name: HttpHeader.CONTENT_TYPE;
-               value:"application/vnd.org.snia.cdmi.dataobject+json"
+               value:"application/cdmi-object" //"application/vnd.org.snia.cdmi.dataobject+json"
             };
         var request : HttpRequest = HttpRequest {
             location: connection.connection;

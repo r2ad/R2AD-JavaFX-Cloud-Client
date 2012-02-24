@@ -62,21 +62,21 @@ import org.occi.model.StoredObject;
 
         var acceptHeader = HttpHeader {
                name: HttpHeader.ACCEPT,
-               value:"application/vnd.org.snia.cdmi.container+json"
+               value:"application/cdmi-container"
             };
         var contentHeader = HttpHeader {
                name: HttpHeader.CONTENT_TYPE;
-               value:"application/vnd.org.snia.cdmi.container+json"
+               value:"application/cdmi-container"
             };
         var versionHeader = HttpHeader {
-               name: "HttpHeader.X-CDMISpecification-Version";
+               name: "X-CDMI-Specification-Version";
                value:"1.0"
             };
 
         var request : HttpRequest = HttpRequest {
             location: "{connection.connection}/{sModel.getTitle()}";
 
-            headers: [contentHeader, acceptHeader, versionHeader]
+            headers: [contentHeader, acceptHeader]
             method: HttpRequest.PUT
 
             onStarted: function() {
